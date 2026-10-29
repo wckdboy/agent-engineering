@@ -224,6 +224,12 @@ class ImpactTests(EngTestCase):
         self.assertIn("tests/test_lib.py", refs)
         self.assertTrue(data["heuristic"])
 
+    def test_unknown_base_is_an_error(self):
+        self.init_basic()
+        res = eng(self.tmp, "impact", "--base", "does-not-exist")
+        self.assertEqual(res.returncode, 2)
+        self.assertIn("cannot diff", res.stderr)
+
 
 class WorktreeTests(EngTestCase):
     def test_create_list_remove(self):

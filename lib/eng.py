@@ -695,9 +695,14 @@ def find_refs(root, symbol, exclude):
 
 
 def impact_data(root, base):
+    if not git(root, "rev-parse", "--is-inside-work-tree").ok:
+        return {"error": "not a git repository"}
+    check = git(root, "diff", "--quiet", base, "--")
+    if check.code not in (0, 1):
+        return {"error": f"cannot diff against {base!r}: {check.err.strip()[:300]}"}
     files = changed_files(root, base)
     if files is None:
-        return None
+        return {"error": "not a git repository"}
     if not files:
         return {
             "schema": IMPACT_SCHEMA, "base": base, "changed_files": [], "symbols": [],
@@ -747,8 +752,8 @@ def cmd_impact(args):
     root = Path(args.root)
     base = args.base or "HEAD"
     data = impact_data(root, base)
-    if data is None:
-        print("eng impact: not a git repository", file=sys.stderr)
+    if data is None or "error" in data:
+        print(f"eng impact: {data.get('error') if data else 'not a git repository'}", file=sys.stderr)
         return 2
     if args.json:
         print(json.dumps(data, indent=2, sort_keys=True))
@@ -1219,7 +1224,10 @@ def cmd_verify(args):
                 unverified.append(f"security:{res['tool']} skipped: {res['reason']}")
     if args.changed:
         impact = impact_data(root, args.base or "HEAD")
-        if impact:
+        if impact and "error" in impact:
+            unverified.append(f"impact analysis failed: {impact['error']}")
+            impact = None
+        elif impact:
             print(f"eng verify: impact {len(impact.get('changed_files', []))} file(s), {len(impact.get('symbols', []))} symbol(s)")
     if snapshot.get("present") and snapshot.get("dirty"):
         unverified.append("working tree was dirty before verification; evidence describes those bytes")

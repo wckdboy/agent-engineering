@@ -11,7 +11,7 @@ not a proof of correctness or security.
 | Pilot baseline `./scripts/check.sh` | pass, 3.18 s |
 | Pilot fast profile | pass, 3.24 s (fmt, clippy, test) |
 | Pilot full profile | pass, 5–7 s (check, gitleaks, Semgrep, OSV, actionlint) |
-| Kit unit/integration tests | 21 tests, 7.9 s, all pass |
+| Kit unit/integration tests | 22 tests, 8.2 s, all pass |
 | Control evaluation | 9/9 evaluated checks pass (known-bad fails; fixed passes; planted secret/SAST found; clean passes) |
 | Agent harness, deterministic stub | 2/2 tasks pass, 0.93 s |
 | Agent harness, no-op agent | 0/2 tasks pass (scoring rejects a non-change) |
