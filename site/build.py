@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the Agent Engineering portal from the kit's source of truth.
+"""Build the ADAMANT portal from the kit's source of truth.
 
 Outputs are deterministic for a given source tree:
   site/data/site.json       UI payload
@@ -300,8 +300,8 @@ def main():
 
     site = {
         "schema": "agent-engineering-site/v1",
-        "title": "Agent Engineering",
-        "tagline": "The controls, skills and evidence an agent needs to build at the level the repository requires.",
+        "title": "ADAMANT",
+        "tagline": "The agent engineering portal: controls, skills and evidence to build at the level the repository requires.",
         "version": VERSION,
         "source": {"commit": commit, "committed_at": commit_date, "dirty": dirty, "content_sha256": content_hash},
         "commands": commands,
@@ -350,9 +350,9 @@ def main():
     (SITE / "agents.json").write_text(json.dumps(agents, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     llms = [
-        "# Agent Engineering",
+        "# ADAMANT",
         "",
-        "> A portable control system for coding agents: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees, and real security gates.",
+        "> ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.",
         "",
         f"Source: `{commit}` · schema `{content_hash[:16]}` · kit version `{VERSION}`.",
         "",
@@ -390,7 +390,7 @@ def main():
         (ROOT / "docs" / "GAPS.md", docs / "gaps.html", "Gaps and residual risk"),
     ]:
         if source.exists():
-            page = f'''<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{html.escape(title)} — Agent Engineering</title><link rel="stylesheet" href="../assets/styles.css"></head><body class="doc-page"><main class="doc"><p class="doc-nav"><a href="../index.html">← Agent Engineering</a></p><h1>{html.escape(title)}</h1>{markdown(source.read_text(encoding="utf-8"))}</main></body></html>'''
+            page = f'''<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{html.escape(title)} — ADAMANT</title><link rel="stylesheet" href="../assets/styles.css"></head><body class="doc-page"><main class="doc"><p class="doc-nav"><a href="../index.html">← ADAMANT</a></p><h1>{html.escape(title)}</h1>{markdown(source.read_text(encoding="utf-8"))}</main></body></html>'''
             target.write_text(page, encoding="utf-8")
 
     kit = build_zip()

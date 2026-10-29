@@ -1,8 +1,8 @@
-# Agent Engineering
+# ADAMANT
 
-> A portable control system for coding agents: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees, and real security gates.
+> ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.
 
-Source: `21257f9` · schema `d235c391be37c3ca` · kit version `1.0.0`.
+Source: `eca1a7d` · schema `d235c391be37c3ca` · kit version `1.0.0`.
 
 ## Start here
 1. Read `AGENTS.md` first. It is the repository's authoritative policy.

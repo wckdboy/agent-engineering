@@ -1,6 +1,6 @@
-# Agent Engineering portal
+# ADAMANT portal
 
-A static, dependency-free portal generated from the kit's actual skills, references and configs.
+ADAMANT is a static, dependency-free portal generated from the kit's actual skills, references and configs.
 It is both a human handbook and an agent handoff.
 
 ## Run locally
@@ -67,3 +67,38 @@ metadata is current.
 - No framework or bundler. The build uses Python's standard library; the client is one ES module-free
   script.
 - Content is escaped; only the repository-owned skill Markdown is rendered as HTML.
+
+## Custom domain — adamant.cc
+
+GitHub Pages is configured with `cname=adamant.cc`; the site artifact contains `CNAME`. The domain
+currently uses Cloudflare nameservers but has **no apex A/AAAA or www CNAME records**, so it does not
+resolve yet. Add one of these DNS configurations at Cloudflare:
+
+Recommended (apex A/AAAA, DNS-only, not proxied):
+
+```text
+A     @    185.199.108.153
+A     @    185.199.109.153
+A     @    185.199.110.153
+A     @    185.199.111.153
+AAAA  @    2606:50c0:8000::153
+AAAA  @    2606:50c0:8001::153
+AAAA  @    2606:50c0:8002::153
+AAAA  @    2606:50c0:8003::153
+CNAME www  wckdboy.github.io
+```
+
+Or, if Cloudflare CNAME flattening is preferred, use a single apex `CNAME @ -> wckdboy.github.io`
+plus the `www` CNAME. Leave the proxy **off** (grey cloud) until GitHub has issued the certificate;
+then enable HTTPS enforcement in the Pages settings. A proxied record can work, but it adds an SSL
+mode and certificate-validation failure mode that is not needed.
+
+After DNS resolves, verify:
+
+```sh
+dig +short adamant.cc
+curl -sSI https://adamant.cc/ | head
+```
+
+The GitHub Pages API reports `cname: adamant.cc`; certificate state remains empty until the DNS
+records exist.
