@@ -1,0 +1,31 @@
+{
+  "schema": "eng-config/v1",
+  "project": "control-fixture",
+  "commands": {
+    "fast": [
+      {
+        "name": "unit",
+        "run": "python3 -m unittest discover -s tests -t . -v",
+        "timeout": 120
+      }
+    ],
+    "full": [
+      {
+        "name": "unit",
+        "run": "python3 -m unittest discover -s tests -t . -v",
+        "timeout": 120
+      }
+    ]
+  },
+  "security": {
+    "required": ["gitleaks", "semgrep"],
+    "optional": ["osv-scanner", "actionlint"],
+    "gitleaks_config": ".agents/config/gitleaks.toml",
+    "semgrep_config": ".agents/config/semgrep.yml",
+    "gitleaks_history": false,
+    "timeout": 120
+  },
+  "parallel": {
+    "max_worktrees": 2
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "eng-config/v1",
+  "project": "agent-eval-fixture",
+  "commands": {
+    "fast": [
+      {
+        "name": "unit",
+        "run": "python3 -m unittest discover -s tests -t . -v",
+        "timeout": 120
+      }
+    ],
+    "full": [
+      {
+        "name": "unit",
+        "run": "python3 -m unittest discover -s tests -t . -v",
+        "timeout": 120
+      }
+    ]
+  },
+  "security": {
+    "required": [],
+    "optional": []
+  },
+  "parallel": {
+    "max_worktrees": 4
+  }
+}

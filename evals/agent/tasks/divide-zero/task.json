@@ -1,0 +1,5 @@
+{
+  "id": "divide-zero",
+  "prompt": "divide(a, 0) silently returns 0, hiding a caller bug. Make it raise ZeroDivisionError for a zero divisor without changing normal division. Run tests/test_divide.py.",
+  "verify": "python3 -m unittest tests.test_divide -v"
+}

@@ -1,0 +1,13 @@
+diff --git a/calc.py b/calc.py
+index 9ad5a3e..7ccc8aa 100644
+--- a/calc.py
++++ b/calc.py
+@@ -5,4 +5,8 @@ def divide(a, b):
+ 
+ 
+ def clamp(value, low, high):
++    if value < low:
++        return low
++    if value > high:
++        return high
+     return value

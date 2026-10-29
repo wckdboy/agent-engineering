@@ -1,0 +1,5 @@
+.agents/evidence/
+.worktrees/
+__pycache__/
+*.pyc
+evals/**/__pycache__/

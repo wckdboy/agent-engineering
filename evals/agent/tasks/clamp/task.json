@@ -1,0 +1,5 @@
+{
+  "id": "clamp",
+  "prompt": "Implement clamp(value, low, high) so values below low return low, values above high return high, and values inside are unchanged. Keep divide as it is. Run tests/test_clamp.py.",
+  "verify": "python3 -m unittest tests.test_clamp -v"
+}
