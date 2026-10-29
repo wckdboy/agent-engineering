@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Engineering — build at the level the repository requires</title>
+  <meta name="description" content="A portable control system for coding agents: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees, and real security gates.">
+  <meta name="theme-color" content="#080b11">
+  <link rel="stylesheet" href="./assets/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080b11'/%3E%3Cpath d='M18 44V20h9l5 9 5-9h9v24h-7V31l-7 12-7-12v13z' fill='%235eead4'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Agent Engineering home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" role="img"><path d="M8 30V10h7l5 8 5-8h7v20h-6V18l-6 10-6-10v12z"/></svg>
+      </span>
+      <span class="brand-text">Agent <em>Engineering</em></span>
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="#playbook">Playbook</a>
+      <a href="#skills">Skills</a>
+      <a href="#paths">Paths</a>
+      <a href="#toolbox">Toolbox</a>
+      <a href="#verify">Evidence</a>
+      <a href="#agents">For agents</a>
+    </nav>
+    <div class="top-actions">
+      <button class="search-trigger" id="search-trigger" type="button" aria-label="Search skills">
+        <span aria-hidden="true">⌕</span><span class="search-label">Search</span><kbd>/</kbd>
+      </button>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle colour theme" title="Toggle theme">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+      </button>
+      <button class="icon-button menu-button" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="Section navigation">
+      <div class="sidebar-inner">
+        <p class="sidebar-label">The system</p>
+        <nav class="side-nav" aria-label="Sections">
+          <a href="#playbook"><span>01</span>Playbook</a>
+          <a href="#principles"><span>02</span>Principles</a>
+          <a href="#skills"><span>03</span>Skills</a>
+          <a href="#paths"><span>04</span>Build paths</a>
+          <a href="#toolbox"><span>05</span>Toolbox</a>
+          <a href="#verify"><span>06</span>Evidence</a>
+          <a href="#repos"><span>07</span>Repositories</a>
+          <a href="#agents"><span>08</span>For agents</a>
+        </nav>
+        <div class="sidebar-card">
+          <span class="pulse" aria-hidden="true"></span>
+          <p class="sidebar-card-title">Local-first controls</p>
+          <p class="sidebar-card-body">No daemon, database or hosted model. Python, Git and optional scanners.</p>
+          <a href="#agents">Machine-readable handoff <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="sidebar-meta" id="source-meta">Loading source…</p>
+      </div>
+    </aside>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-dot"></span> Portable · agent-ready · evidence-first</p>
+          <h1>Build at the level<br>the repository <em>requires.</em></h1>
+          <p class="hero-lead">A working control system for coding agents: ten task skills, one dependency-free verification CLI, hash-chained evidence, isolated worktrees and real security gates.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#playbook">Read the playbook <span aria-hidden="true">→</span></a>
+            <a class="button ghost" href="#skills">Explore the skills</a>
+            <a class="button text" id="download-top" href="./downloads/eng-kit.zip">Download the kit <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="hero-stats" id="hero-stats" aria-label="Kit statistics"></div>
+        </div>
+        <div class="terminal-wrap" aria-label="Example verification session">
+          <div class="terminal-glow" aria-hidden="true"></div>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span class="dot red"></span><span class="dot amber"></span><span class="dot green"></span>
+              <span class="terminal-title">sovware · main</span>
+              <span class="terminal-badge">verification</span>
+            </div>
+            <div class="terminal-body">
+              <p><span class="prompt">$</span> ./.agents/bin/eng verify --profile full</p>
+              <p class="dim">check       ok      2.35s  exit=0</p>
+              <p class="dim">gitleaks    ok      0.06s  (0)</p>
+              <p class="dim">semgrep     ok      1.53s  (0)</p>
+              <p class="dim">osv-scanner ok      0.50s  (0)</p>
+              <p class="dim">actionlint  ok      0.03s  (0)</p>
+              <p class="ok">PASS <span class="dim">— evidence written</span></p>
+              <p class="path">.agents/evidence/20261029T202043Z-791696ef.json</p>
+              <p class="dim">sha256:5273768155a6a471…</p>
+              <p class="cursor-line"><span class="prompt">$</span> <span class="cursor" aria-hidden="true"></span></p>
+            </div>
+          </div>
+          <div class="terminal-note"><span class="pulse"></span> The gate is only green when the command actually ran.</div>
+        </div>
+      </section>
+
+      <section class="section" id="playbook">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">01 — The loop</p>
+            <h2>Understand. Plan. Prove.</h2>
+          </div>
+          <p class="section-intro">Six phases, one rule: a skipped or blocked check is never a pass. The loop is deliberately small enough to run on every change.</p>
+        </div>
+        <div class="phase-grid" id="phase-grid"></div>
+      </section>
+
+      <section class="section" id="principles">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">02 — Operating principles</p>
+            <h2>The rules behind the rules.</h2>
+          </div>
+          <p class="section-intro">Seven cross-cutting commitments. They apply whether the task is a one-line fix, a kernel change or a release.</p>
+        </div>
+        <div class="principle-grid" id="principle-grid"></div>
+      </section>
+
+      <section class="section" id="skills">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">03 — Skills</p>
+            <h2>Load the task, not the whole manual.</h2>
+          </div>
+          <p class="section-intro">Ten entrypoints with activation conditions, permissions, workflow, verification and completion criteria. Open one to read the full source.</p>
+        </div>
+        <div class="skill-toolbar">
+          <label class="search-field" for="skill-search">
+            <span aria-hidden="true">⌕</span>
+            <input id="skill-search" type="search" placeholder="Search skills, tasks or tags…" autocomplete="off">
+            <kbd>/</kbd>
+          </label>
+          <div class="filter-chips" id="skill-filters" role="group" aria-label="Filter by phase"></div>
+          <span class="result-count" id="skill-count" aria-live="polite"></span>
+        </div>
+        <div class="skill-grid" id="skill-grid"></div>
+        <p class="empty-state" id="skill-empty" hidden>No skill matches that filter. Try “security”, “release” or clear the filters.</p>
+      </section>
+
+      <section class="section" id="paths">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">04 — Build paths</p>
+            <h2>Start with the outcome.</h2>
+          </div>
+          <p class="section-intro">Choose the work. Get the ordered steps, the skill to load, the commands to run and the evidence each step must leave.</p>
+        </div>
+        <div class="path-layout">
+          <div class="path-menu" id="path-menu" role="tablist" aria-label="Build paths"></div>
+          <div class="path-detail" id="path-detail" role="tabpanel"></div>
+        </div>
+      </section>
+
+      <section class="section" id="toolbox">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">05 — Toolbox</p>
+            <h2>Composable tools, explicit limits.</h2>
+          </div>
+          <p class="section-intro">What is adopted, what is conditional, and what is still a candidate. No tool is added because it is fashionable; each has a role and a failure mode.</p>
+        </div>
+        <div class="tool-toolbar">
+          <label class="search-field" for="tool-search">
+            <span aria-hidden="true">⌕</span>
+            <input id="tool-search" type="search" placeholder="Search tools and connectors…" autocomplete="off">
+          </label>
+          <div class="filter-chips" id="tool-filters" role="group" aria-label="Filter tools by category"></div>
+          <span class="result-count" id="tool-count" aria-live="polite"></span>
+        </div>
+        <div class="tool-grid" id="tool-grid"></div>
+        <p class="empty-state" id="tool-empty" hidden>No tool matches. Try “security”, “tests” or “connectors”.</p>
+      </section>
+
+      <section class="section" id="verify">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">06 — Evidence</p>
+            <h2>A record, not a vibe.</h2>
+          </div>
+          <p class="section-intro">Every verification writes one hash-chained record: exact commands, exit codes, durations, output hashes, Git state, config hash and scanner versions.</p>
+        </div>
+        <div class="verify-layout">
+          <div class="evidence-card">
+            <div class="evidence-head">
+              <div><span class="status-dot green"></span><strong>verdict: pass</strong><span class="muted">full · 5.44s</span></div>
+              <code>eng-evidence/v1</code>
+            </div>
+            <pre class="evidence-code"><code>{
+  "commands": [
+    { "name": "check", "status": "pass", "exit_code": 0 }
+  ],
+  "security": [
+    { "tool": "gitleaks", "status": "pass", "findings": 0 },
+    { "tool": "semgrep", "status": "pass", "findings": 0 }
+  ],
+  "git": { "head": "791696e", "dirty": false },
+  "verdict": {
+    "status": "pass",
+    "required_failures": [],
+    "unverified": []
+  },
+  "sha256": "5273768155a6a471…"
+}</code></pre>
+            <div class="evidence-foot">
+              <span class="mono">./.agents/bin/eng evidence verify</span>
+              <span class="status-chip ok">chain intact</span>
+            </div>
+          </div>
+          <div class="status-stack">
+            <article class="status-row"><span class="status-chip ok">pass</span><div><strong>Ran and succeeded</strong><p>Every required command exited 0; required scanners completed with no findings.</p></div></article>
+            <article class="status-row"><span class="status-chip fail">fail</span><div><strong>Ran and failed</strong><p>A required command, timeout or security finding. The failing log stays with the record.</p></div></article>
+            <article class="status-row"><span class="status-chip blocked">blocked</span><div><strong>Gate unknown</strong><p>A required scanner or config is missing. Blocked is not a pass and never becomes one.</p></div></article>
+            <article class="status-row"><span class="status-chip skipped">skipped</span><div><strong>Not applicable or absent</strong><p>Reported as unverified. Optional scanner absence is visible, not silent.</p></div></article>
+            <article class="status-row"><span class="status-chip error">error</span><div><strong>Untrustworthy result</strong><p>The tool ran but did not produce a report. Treated as unknown, not green.</p></div></article>
+          </div>
+        </div>
+        <div class="evidence-actions">
+          <a class="button ghost" href="./docs/README.agents.html">Read the operating manual</a>
+          <button class="button text" type="button" data-copy="./.agents/bin/eng evidence verify">Copy verification command</button>
+        </div>
+      </section>
+
+      <section class="section" id="repos">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">07 — Repositories</p>
+            <h2>Different trees, one contract.</h2>
+          </div>
+          <p class="section-intro">Current rollout status. A blocked or review state is information, not a failure to hide.</p>
+        </div>
+        <div class="repo-grid" id="repo-grid"></div>
+      </section>
+
+      <section class="section" id="agents">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">08 — For agents</p>
+            <h2>Give the next agent the shortest correct path.</h2>
+          </div>
+          <p class="section-intro">The portal is also a machine-readable handoff. Point an agent at <code>agents.json</code> or <code>llms.txt</code>; download the same kit a human installs.</p>
+        </div>
+        <div class="machine-grid">
+          <a class="machine-card" href="./agents.json">
+            <span class="machine-icon">{ }</span>
+            <div><h3>agents.json</h3><p>Schema, start commands, skills, paths, tools, guardrails, repository states and limits.</p></div>
+            <span class="machine-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="machine-card" href="./llms.txt">
+            <span class="machine-icon">≡</span>
+            <div><h3>llms.txt</h3><p>A compact brief with the commands, all ten skills, the adopted tools, the rules and the limits.</p></div>
+            <span class="machine-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="machine-card" href="./data/site.json">
+            <span class="machine-icon">◇</span>
+            <div><h3>site.json</h3><p>The full portal payload: phases, principles, skill bodies, tools, paths and repo status.</p></div>
+            <span class="machine-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="machine-card" href="./downloads/eng-kit.zip">
+            <span class="machine-icon">↓</span>
+            <div><h3>eng-kit.zip</h3><p>The installable kit: CLI, skills, references, configs, hooks, CI template and manifest.</p></div>
+            <span class="machine-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <div class="handoff">
+          <div class="handoff-head"><span class="terminal-title">Agent handoff</span><button class="copy-button" type="button" data-copy="Read AGENTS.md first. Then read .agents/README.md and .agents/references/change-lifecycle.md. Run ./.agents/bin/eng detect and ./.agents/bin/eng verify --profile fast. Before editing shared code run ./.agents/bin/eng impact --base origin/main. Never report a skipped or blocked check as passing.">Copy brief</button></div>
+          <pre><code>Read AGENTS.md first.
+Then read .agents/README.md and .agents/references/change-lifecycle.md.
+Run ./.agents/bin/eng detect and ./.agents/bin/eng verify --profile fast.
+Before editing shared code:
+  ./.agents/bin/eng impact --base origin/main
+Never report a skipped or blocked check as passing.</code></pre>
+        </div>
+        <div class="limits">
+          <h3>Known limits</h3>
+          <ul id="limit-list"></ul>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>
+          <span class="brand-text">Agent <em>Engineering</em></span>
+          <p>Portable controls for repositories worked on by agents. Built from the same source the installer ships.</p>
+        </div>
+        <div class="footer-meta">
+          <span id="footer-version">v1.0.0</span>
+          <span>·</span>
+          <a href="./llms.txt">llms.txt</a>
+          <span>·</span>
+          <a href="./agents.json">agents.json</a>
+          <span>·</span>
+          <a href="#top">Back to top ↑</a>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="drawer" id="skill-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+    <div class="drawer-head">
+      <div>
+        <p class="drawer-kicker" id="drawer-kicker">Skill</p>
+        <h2 id="drawer-title">Skill</h2>
+      </div>
+      <button class="icon-button" id="drawer-close" type="button" aria-label="Close skill details">✕</button>
+    </div>
+    <div class="drawer-meta" id="drawer-meta"></div>
+    <div class="drawer-body" id="drawer-body"></div>
+    <div class="drawer-foot">
+      <button class="button primary" type="button" id="drawer-copy">Copy SKILL.md</button>
+      <span class="muted" id="drawer-source"></span>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <noscript><div class="noscript">This portal needs JavaScript to render the generated catalog. The machine-readable files still work: <a href="./agents.json">agents.json</a> and <a href="./llms.txt">llms.txt</a>.</div></noscript>
+  <script src="./assets/app.js" defer></script>
+</body>
+</html>

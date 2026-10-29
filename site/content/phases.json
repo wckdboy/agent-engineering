@@ -1,0 +1,62 @@
+[
+  {
+    "id": "understand",
+    "number": "01",
+    "title": "Understand",
+    "question": "What behavior is being asked for, and what must not change?",
+    "body": "Locate the symbols, modules, tests and contracts involved. Separate observed facts from inferred assumptions. Read the repository's policy before the code.",
+    "outputs": ["Acceptance criteria", "Affected symbols and consumers", "Behavior to preserve", "Smallest safe modification"],
+    "checks": ["Every claim cites a path or command", "Existing policy outranks memory", "Unknowns are listed, not guessed"],
+    "skills": ["repo-intelligence", "change-impact"]
+  },
+  {
+    "id": "plan",
+    "number": "02",
+    "title": "Plan",
+    "question": "What is the smallest independently verifiable unit?",
+    "body": "Choose one reviewable change. Name the tests that will prove it, the security and compatibility risks, and the rollback. Decide whether the work can run in parallel.",
+    "outputs": ["Change boundary", "Verification plan", "Risk classification", "Rollback path"],
+    "checks": ["The plan has a failing test or a characterization test", "Shared interfaces are sequenced", "No unrelated refactor is included"],
+    "skills": ["change-impact", "contract-guardian", "parallel-executor"]
+  },
+  {
+    "id": "baseline",
+    "number": "03",
+    "title": "Establish baseline",
+    "question": "What is already broken, and what does measurable good look like?",
+    "body": "Run the relevant existing checks before editing. Record pre-existing failures separately. Add characterization tests where coverage is thin and a performance baseline before optimizing.",
+    "outputs": ["Baseline command results", "Known failures", "Characterization tests", "Performance baseline where relevant"],
+    "checks": ["Baseline uses the repository's authoritative command", "Pre-existing failures are not attributed to the change", "Baseline evidence is recorded"],
+    "skills": ["regression-guardian", "performance-engineer"]
+  },
+  {
+    "id": "implement",
+    "number": "04",
+    "title": "Implement",
+    "question": "Can this be smaller, reversible and inside the owned boundary?",
+    "body": "Make the smallest change that satisfies the requirement. Preserve architecture and contracts unless the task explicitly changes them. Keep formatting, refactoring and behavior in separate steps.",
+    "outputs": ["Focused diff", "Regression test", "Updated contract or migration when required", "Reversible commit or patch"],
+    "checks": ["No unrelated edits", "No new dependency without justification", "No secrets or debug output", "Public behavior changes are explicit"],
+    "skills": ["safe-refactor", "regression-guardian"]
+  },
+  {
+    "id": "verify",
+    "number": "05",
+    "title": "Verify",
+    "question": "What actually ran, and what does the evidence prove?",
+    "body": "Run format, lint, type, unit and integration checks. Run contract, property, fuzz or differential checks where the surface warrants it. Review the final diff. A check that did not run is unverified, not passed.",
+    "outputs": ["Targeted test results", "Fast and full gate results", "Security findings", "Performance comparison", "Evidence record"],
+    "checks": ["The regression test fails before the fix and passes after", "Required scanners ran", "Skipped or blocked checks are reported", "The final diff has no surprises"],
+    "skills": ["regression-guardian", "security-auditor", "contract-guardian", "performance-engineer"]
+  },
+  {
+    "id": "report",
+    "number": "06",
+    "title": "Report",
+    "question": "What changed, what was proven, and what remains uncertain?",
+    "body": "Report the change, requirements satisfied, commands executed, failures, skips, security considerations, performance effect and residual risk. Link the evidence record. Do not present a model summary as a check result.",
+    "outputs": ["Change summary", "Commands and results", "Unverified behavior", "Residual risk and rollback", "Evidence link"],
+    "checks": ["Every pass has an exit code or record", "Every skip is named", "The report states the limit as plainly as the feature"],
+    "skills": ["release-verifier", "failure-investigator"]
+  }
+]

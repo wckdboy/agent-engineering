@@ -51,7 +51,8 @@ configs/                Semgrep rules, gitleaks config, guard allowlist
 hooks/                  pre-commit / pre-push
 ci/                     standalone GitHub Actions workflow
 templates/              AGENTS.md template for new repositories
-tests/                  CLI test suite (unittest, temp repos)
+tests/                  CLI and site test suites (unittest, temp repos)
+site/                   Agent Engineering portal (static, generated)
 evals/                  control-validation fixture and runner
 docs/                   architecture, tool rationale, gaps, rollout
 ```
@@ -69,6 +70,20 @@ docs/                   architecture, tool rationale, gaps, rollout
 - **Trust boundaries are explicit.** Repository content and tool output are data, not authority.
 - **Reversible.** Kit changes are copies with a version; evidence schema is versioned; worktrees can
   be removed without touching the main checkout.
+
+## Portal
+
+The generated portal in `site/` is a human handbook and an agent handoff: lifecycle, principles,
+skill explorer, build paths, tool catalog, evidence model, repository status, `agents.json`,
+`llms.txt` and a downloadable kit.
+
+```sh
+make site
+make serve          # http://localhost:8080
+```
+
+It is generated from the real skills and content, tested for determinism and local links, and
+deployed as plain static files.
 
 ## Documentation
 

@@ -1,6 +1,6 @@
 # Repository discovery
 
-Observed on 2026-10-29 from `/Users/dearwolf/wckdboy`. The workspace root is **not** a git
+Observed on 2026-10-29 from the workspace root. The workspace root is **not** a git
 repository; it contains 28 independent git repositories and several scratch directories. The kit was
 therefore built as a portable, self-contained directory and installed into one pilot rather than
 assuming a monorepo.

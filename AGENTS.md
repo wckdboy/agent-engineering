@@ -12,15 +12,17 @@ deterministic, and honest about what it verified.
 - `references/` — shared lifecycle, evidence and trust policy.
 - `configs/` — scanner configuration. Every Semgrep rule needs a failing fixture.
 - `hooks/`, `ci/`, `templates/` — installation surfaces.
-- `tests/` — `unittest` suite against temporary git repositories.
+- `tests/` — `unittest` suite against temporary git repositories and the generated portal.
+- `site/` — generated Agent Engineering portal; edit `site/content/` or skills, then rebuild.
 - `evals/` — control-validation fixture; known-bad changes must be caught.
 - `docs/` — architecture, tool rationale, gaps, rollout.
 
 ## Authoritative commands
 
 ```sh
-./tests/run.sh                 # full kit test suite
+./tests/run.sh                 # full kit test suite (builds the portal)
 python3 -m py_compile lib/eng.py
+python3 site/build.py          # regenerate site/data, agents.json, llms.txt, kit zip
 ./bin/eng --help
 ./bin/eng --root /path/to/repo detect
 ./evals/run.py                 # control validation

@@ -3,8 +3,18 @@
 set -eu
 cd "$(dirname "$0")/.."
 
+echo "== build the agent portal"
+python3 site/build.py
+
 echo "== python syntax"
-python3 -m py_compile lib/eng.py tests/test_eng.py evals/run.py evals/agent/run.py evals/agent/stub_agent.py
+python3 -m py_compile lib/eng.py tests/test_eng.py tests/test_site.py evals/run.py evals/agent/run.py evals/agent/stub_agent.py site/build.py
+
+echo "== javascript syntax"
+if command -v node >/dev/null 2>&1; then
+  node --check site/assets/app.js
+else
+  echo "skip: node not installed"
+fi
 
 echo "== unit and integration tests"
 python3 -m unittest discover -s tests -t . -v

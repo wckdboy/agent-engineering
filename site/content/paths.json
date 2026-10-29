@@ -1,0 +1,110 @@
+[
+  {
+    "id": "onboard",
+    "title": "Onboard a repository",
+    "glyph": "01",
+    "summary": "Discover the map, commands and policy before touching code.",
+    "when": "A new repository, a stale summary, or an unfamiliar module.",
+    "steps": [
+      {"title": "Read the policy", "body": "Read AGENTS.md first, then the build manifests and the pull-request workflow.", "commands": ["sed -n '1,120p' AGENTS.md"], "skills": ["repo-intelligence"], "done": "Commands are sourced from the repository, not invented."},
+      {"title": "Build the map", "body": "Inventory stacks, modules, tests, CI and interface candidates with the dependency-free detector.", "commands": ["./.agents/bin/eng detect"], "skills": ["repo-intelligence"], "done": "The map cites paths and marks its inferences."},
+      {"title": "Install the controls", "body": "If the repository has no `.agents/engineering.json`, install the kit and commit the resulting files.", "commands": ["./install.sh --target <repo> --hooks"], "skills": ["repo-intelligence"], "done": "The config and AGENTS section are reviewed; hooks are enabled locally."},
+      {"title": "Run the baseline", "body": "Run the fast gate before editing and record pre-existing failures separately.", "commands": ["./.agents/bin/eng verify --profile fast", "./.agents/bin/eng evidence list"], "skills": ["regression-guardian"], "done": "A baseline evidence record exists and failures are known."}
+    ]
+  },
+  {
+    "id": "fix-bug",
+    "title": "Fix a bug",
+    "glyph": "02",
+    "summary": "Reproduce, prove the cause, fix it, and leave a red-then-green test.",
+    "when": "A failing test, crash, incident or reported behavior.",
+    "steps": [
+      {"title": "Reproduce", "body": "Capture the exact command, revision, environment and full failure. Reduce the input while it still fails.", "commands": ["./.agents/bin/eng verify --profile fast"], "skills": ["failure-investigator"], "done": "The smallest failing reproduction is recorded."},
+      {"title": "Establish the baseline", "body": "Run the existing suite and record pre-existing failures. Do not attribute them to the fix.", "commands": ["./.agents/bin/eng verify --profile fast"], "skills": ["regression-guardian"], "done": "Baseline results are saved."},
+      {"title": "Write the regression test", "body": "Add the test to the existing file for the area. Prove it fails on the unfixed revision for the reported reason.", "commands": ["git stash", "cargo test <test>", "git stash pop"], "skills": ["regression-guardian"], "done": "The test fails before the fix with the expected assertion."},
+      {"title": "Fix the cause", "body": "Make the smallest change that removes the cause, not the symptom. Do not combine it with a refactor.", "commands": ["git diff", "./.agents/bin/eng impact --base HEAD"], "skills": ["safe-refactor", "change-impact"], "done": "The reproduction and the new test pass."},
+      {"title": "Verify and report", "body": "Run the targeted test, the fast gate and the required full gate. Report the evidence id and residual risk.", "commands": ["./.agents/bin/eng verify --profile full", "./.agents/bin/eng evidence verify"], "skills": ["regression-guardian"], "done": "Evidence is pass or an explicit blocked/skip is reported."}
+    ]
+  },
+  {
+    "id": "add-feature",
+    "title": "Add a feature",
+    "glyph": "03",
+    "summary": "Turn an outcome into the smallest change with a testable contract.",
+    "when": "A new user-visible capability, command, endpoint or setting.",
+    "steps": [
+      {"title": "Define the acceptance criteria", "body": "Write what the user can observe, including defaults, errors and compatibility. Separate must-haves from preferences.", "commands": ["rg -n '<feature>|<command>' ."], "skills": ["repo-intelligence", "change-impact"], "done": "Criteria are testable and the affected consumers are listed."},
+      {"title": "Design the smallest interface", "body": "Prefer an existing pattern to a new abstraction. Name the contract and its owner.", "commands": ["./.agents/bin/eng impact --base origin/main"], "skills": ["change-impact", "contract-guardian"], "done": "The interface and compatibility decision are explicit."},
+      {"title": "Implement with tests", "body": "Add unit tests for the new behavior and integration tests at the real boundary. Keep unrelated refactors out.", "commands": ["cargo test --quiet", "npm test"], "skills": ["regression-guardian"], "done": "The new tests fail without the change and pass with it."},
+      {"title": "Check the contract and security", "body": "Add old/new fixtures for serialization, CLI output or schema changes. Run the relevant scanners.", "commands": ["./.agents/bin/eng security --json", "./.agents/bin/eng verify --profile full"], "skills": ["contract-guardian", "security-auditor"], "done": "Compatibility and security checks are recorded."},
+      {"title": "Ship with evidence", "body": "Report the behavior, commands, skips and residual risk. Link the evidence record.", "commands": ["./.agents/bin/eng evidence list"], "skills": ["release-verifier"], "done": "A reviewer can reproduce the verification."}
+    ]
+  },
+  {
+    "id": "refactor",
+    "title": "Refactor safely",
+    "glyph": "04",
+    "summary": "Change structure without changing observable behavior.",
+    "when": "Extracting modules, renaming internals, removing duplication or preparing for a feature.",
+    "steps": [
+      {"title": "Freeze the behavior", "body": "Run the relevant tests and add characterization or golden coverage where it is thin.", "commands": ["./.agents/bin/eng verify --profile fast"], "skills": ["regression-guardian"], "done": "The baseline is green or known failures are documented."},
+      {"title": "Identify the contract", "body": "List public symbols, serialized output, errors, defaults and performance that must not change.", "commands": ["./.agents/bin/eng impact --base HEAD"], "skills": ["change-impact", "contract-guardian"], "done": "The observable surface is named."},
+      {"title": "Move in small steps", "body": "One mechanical step at a time. Run the compiler and narrow tests after each step.", "commands": ["cargo check", "git diff -w"], "skills": ["safe-refactor"], "done": "Each step is reviewable and green."},
+      {"title": "Compare behavior", "body": "Run the contract and characterization fixtures. Compare performance on hot paths.", "commands": ["./.agents/bin/eng verify --profile full"], "skills": ["performance-engineer"], "done": "Outputs are identical; any change is explicit."},
+      {"title": "Separate the discovery", "body": "If the refactor reveals a bug, record it and open a separate change. Do not silently expand scope.", "commands": ["./.agents/bin/eng impact --base origin/main"], "skills": ["failure-investigator"], "done": "New issues have their own evidence and owner."}
+    ]
+  },
+  {
+    "id": "security",
+    "title": "Harden a surface",
+    "glyph": "05",
+    "summary": "Model the trust boundary, scan it, fix the cause, and prove the fix.",
+    "when": "Input parsing, auth, secrets, subprocesses, files, network, CI permissions or a scanner finding.",
+    "steps": [
+      {"title": "Map the trust boundary", "body": "Name the assets, actors, entry points, privileged operations and attacker-controlled data.", "commands": ["rg -n 'auth|token|secret|exec|Command|subprocess' <path>"], "skills": ["security-auditor"], "done": "The boundary and preconditions are explicit."},
+      {"title": "Run the scanners", "body": "Run secrets, SAST, dependency, workflow and pin checks. Read the findings, not only the counts.", "commands": ["./.agents/bin/eng security --json", "./.agents/bin/eng audit-actions"], "skills": ["security-auditor"], "done": "Every finding has a location and a decision."},
+      {"title": "Fix or suppress narrowly", "body": "Fix the cause. A false positive gets an exact, reviewed suppression with a reason; never broaden the rule.", "commands": ["git diff", "./.agents/bin/eng security --json"], "skills": ["security-auditor"], "done": "The scanner is clean or the exception is justified."},
+      {"title": "Add a regression test", "body": "Test the exploit precondition and the rejection. Do not publish exploit details in a public issue.", "commands": ["./.agents/bin/eng verify --profile full"], "skills": ["regression-guardian"], "done": "The test fails on the vulnerable revision and passes after."}
+    ]
+  },
+  {
+    "id": "performance",
+    "title": "Improve performance",
+    "glyph": "06",
+    "summary": "Baseline, profile, change one thing, and measure the distribution.",
+    "when": "Latency, throughput, memory, startup or build-time work.",
+    "steps": [
+      {"title": "Define the metric", "body": "Choose the user-facing metric and a target. Pin the workload, hardware and build profile.", "commands": ["hyperfine '<benchmark>'", "cargo bench"], "skills": ["performance-engineer"], "done": "The measurement is repeatable."},
+      {"title": "Record the baseline", "body": "Take at least five samples after warm-up. Keep the raw results and environment.", "commands": ["hyperfine --warmup 3 --runs 10 '<benchmark>'"], "skills": ["performance-engineer"], "done": "Median, p95 and variance are recorded."},
+      {"title": "Profile before changing", "body": "Find the dominant cost. A small function is not the bottleneck just because it looks slow.", "commands": ["perf record / instruments / flamegraph"], "skills": ["performance-engineer"], "done": "The bottleneck has evidence."},
+      {"title": "Change one thing", "body": "Re-run the identical workload and check correctness and other metrics.", "commands": ["./.agents/bin/eng verify --profile full"], "skills": ["regression-guardian", "performance-engineer"], "done": "The effect exceeds noise and correctness holds."}
+    ]
+  },
+  {
+    "id": "parallel",
+    "title": "Parallelize work",
+    "glyph": "07",
+    "summary": "Split by independently verifiable units, isolate them, integrate sequentially.",
+    "when": "Multiple independent fixes, research beside implementation, or a large feature.",
+    "steps": [
+      {"title": "Define units", "body": "Each unit needs an outcome, owned files, a verification command and a dependency list.", "commands": ["./.agents/bin/eng detect"], "skills": ["parallel-executor", "repo-intelligence"], "done": "Units do not share writable files or state."},
+      {"title": "Create worktrees", "body": "One worktree and branch per unit, with an owner. The CLI refuses a dirty tree and enforces the cap.", "commands": ["./.agents/bin/eng worktree create <unit> --owner <agent>", "./.agents/bin/eng worktree list"], "skills": ["parallel-executor"], "done": "Ownership and scope are recorded."},
+      {"title": "Run and verify", "body": "Implement in isolation. Each owner runs its unit's checks and records evidence.", "commands": ["./.agents/bin/eng verify --profile fast"], "skills": ["parallel-executor", "regression-guardian"], "done": "Each unit has isolated evidence."},
+      {"title": "Integrate sequentially", "body": "Rebase one unit at a time, resolve conflicts explicitly, and re-run the full gate on the latest target.", "commands": ["git rebase origin/main", "./.agents/bin/eng verify --profile full"], "skills": ["parallel-executor", "contract-guardian"], "done": "The integrated revision passes, not just the union of unit tests."},
+      {"title": "Clean up", "body": "Remove merged worktrees; keep unmerged branches with a reason. Never force-remove dirty work.", "commands": ["./.agents/bin/eng worktree remove <unit>"], "skills": ["parallel-executor"], "done": "No orphaned work or shared-state corruption."}
+    ]
+  },
+  {
+    "id": "release",
+    "title": "Prepare a release",
+    "glyph": "08",
+    "summary": "Bind a clean revision, passing evidence, version, notes, rollback and artifact digest.",
+    "when": "A tag, package, binary, container, deployment or store submission.",
+    "steps": [
+      {"title": "Freeze the candidate", "body": "Record the exact commit and artifact. Never release from an unverified dirty tree.", "commands": ["git rev-parse HEAD", "./.agents/bin/eng artifact dist/<artifact>"], "skills": ["release-verifier"], "done": "The candidate digest is recorded."},
+      {"title": "Run the full gate", "body": "Run the full profile and confirm the evidence record is for this HEAD.", "commands": ["./.agents/bin/eng verify --profile full --ci"], "skills": ["release-verifier", "security-auditor"], "done": "The full evidence is pass for the candidate."},
+      {"title": "Check the release contract", "body": "Check version, changelog, notes, migration and rollback. Verify the artifact hash and any supplied signature/SBOM.", "commands": ["./.agents/bin/eng release-check --version <v> --artifact <path> --notes <file> --rollback <file>"], "skills": ["release-verifier", "contract-guardian"], "done": "The release record is written and reproducible."},
+      {"title": "Get approval and publish", "body": "Obtain explicit human approval. Publish through the approved channel. Verify the public artifact and smoke-test it.", "commands": ["cosign verify-blob --key <pub> --signature <sig> <artifact>"], "skills": ["release-verifier"], "done": "The published digest matches the candidate; rollback is ready."}
+    ]
+  }
+]

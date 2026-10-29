@@ -1,0 +1,57 @@
+[
+  {
+    "id": "engineering",
+    "name": "engineering",
+    "role": "Portable kit source",
+    "branch": "main",
+    "status": "green",
+    "gate": "make check",
+    "evidence": "33 tests, 9/9 control checks, agent harness 2/2",
+    "remote": "local source",
+    "notes": "The source of truth for skills, CLI, configs and this portal. Changes here are installed into repositories; they are not product changes."
+  },
+  {
+    "id": "sovware",
+    "name": "sovware",
+    "role": "Pilot repository",
+    "branch": "main",
+    "status": "green",
+    "gate": "./.agents/bin/eng verify --profile full",
+    "evidence": "GitHub Actions passing; evidence artifact uploaded",
+    "remote": "wckdboy/sovware",
+    "notes": "Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds."
+  },
+  {
+    "id": "polykrom",
+    "name": "polykrom",
+    "role": "Large Rust CAD workspace",
+    "branch": "eng/portable-controls",
+    "status": "blocked",
+    "gate": "./.agents/bin/eng verify --profile fast",
+    "evidence": "Fast profile 22s; legacy design contract fixture passes; full gate blocked",
+    "remote": "local review branch",
+    "notes": "The large-tree test. Fast profile is bounded to fmt, layers, lists, assets and the io contract tests. OSV reports 15 dependency advisories; the authoritative cargo xtask ci is not yet green."
+  },
+  {
+    "id": "platform",
+    "name": "platform",
+    "role": "Infrastructure control plane",
+    "branch": "eng/portable-controls",
+    "status": "review",
+    "gate": "./.agents/bin/eng verify --profile full",
+    "evidence": "9/9 actions pinned; actionlint and zizmor clean; full gate 3.2s",
+    "remote": "local review branch",
+    "notes": "Read-only quality workflow added. The organization-level policy still does not require SHA-pinned actions; that is an owner decision outside the repository."
+  },
+  {
+    "id": "template",
+    "name": "your repository",
+    "role": "New installation",
+    "branch": "feature branch",
+    "status": "template",
+    "gate": "./.agents/bin/eng verify --profile fast",
+    "evidence": "No baseline until you run it",
+    "remote": "any Git repository",
+    "notes": "Install the kit, keep AGENTS.md authoritative, and start with the fast profile. Do not copy another repository's commands without checking its build files."
+  }
+]

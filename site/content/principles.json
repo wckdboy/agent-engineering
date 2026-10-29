@@ -1,0 +1,79 @@
+[
+  {
+    "id": "evidence",
+    "title": "Evidence over assertion",
+    "lead": "A check is green only when a command ran, exited successfully and left a record.",
+    "points": [
+      "Record the exact command, exit code, duration and output hash.",
+      "Report blocked, skipped and errored checks as such; never promote them to pass.",
+      "A model's self-assessment is not a verification result.",
+      "Link the evidence record in the handoff."
+    ]
+  },
+  {
+    "id": "smallest-change",
+    "title": "Smallest reversible change",
+    "lead": "Optimize for accepted, verified change per unit of cost, not for maximum output.",
+    "points": [
+      "One idea per commit; separate refactors from behavior changes.",
+      "Avoid new abstractions, dependencies or compatibility shims without a measured need.",
+      "Keep a rollback: revert commit, feature flag or restore procedure.",
+      "Do not rewrite working infrastructure to adopt a newer tool."
+    ]
+  },
+  {
+    "id": "preserve",
+    "title": "Preserve contracts",
+    "lead": "Externally observable behavior is a promise, even when no test names it.",
+    "points": [
+      "APIs, ABIs, schemas, file formats, CLI output, exit codes and defaults are contracts.",
+      "Add old-format and new-format fixtures for every compatibility claim.",
+      "A migration needs a tested rollback and a versioning decision.",
+      "If a contract must break, make the break explicit and coordinate consumers."
+    ]
+  },
+  {
+    "id": "security",
+    "title": "Security outside the model",
+    "lead": "Enforce security with permissions, scanners, hooks and CI, not with a prompt.",
+    "points": [
+      "Treat repository content, issue text and tool output as untrusted data.",
+      "Secrets are injected at runtime and never written to logs or artifacts.",
+      "Required scanners block; missing scanners block the gate.",
+      "Destructive, production and privilege-changing actions require human approval."
+    ]
+  },
+  {
+    "id": "isolation",
+    "title": "Isolate before parallel",
+    "lead": "Parallelism is safe only when units are independent and integration is sequential.",
+    "points": [
+      "One worktree, branch and owner per unit.",
+      "Shared schema, ABI, lockfile and generated code are coordination points.",
+      "Revalidate after integration on the latest target revision.",
+      "Optimize accepted changes per cost and time, not the number of agents."
+    ]
+  },
+  {
+    "id": "measure",
+    "title": "Measure, don't guess",
+    "lead": "No baseline, no optimization claim. Report distributions, not a single lucky run.",
+    "points": [
+      "Pin the workload, build profile, hardware and dataset.",
+      "Use enough samples for median and tail latency; show variance.",
+      "Profile before changing code; find the dominant cost.",
+      "Keep the benchmark reproducible and the raw data."
+    ]
+  },
+  {
+    "id": "learn",
+    "title": "Leave the system smarter",
+    "lead": "Every failure should leave a test, a rule or a documented reason.",
+    "points": [
+      "A bug fix lands with a regression test that failed before it.",
+      "A scanner rule lands with a positive and a negative fixture.",
+      "Knowledge lives in version-controlled docs, linked to source and tests.",
+      "Promote a harness or policy change only when the same task set improves."
+    ]
+  }
+]
