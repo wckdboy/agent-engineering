@@ -1134,6 +1134,9 @@ def cmd_evidence(args):
                 print(f"{e['at']}  {e['id']}  {e['sha256'][:16]}")
         return 0
     if args.action == "show":
+        if not re.fullmatch(r"[A-Za-z0-9._-]+", args.id or ""):
+            print("eng evidence: invalid record id", file=sys.stderr)
+            return 2
         path = evidence_dir(root) / f"{args.id}.json"
         if not path.exists():
             print(f"eng evidence: no such record {args.id}", file=sys.stderr)
@@ -1364,6 +1367,9 @@ def cmd_worktree(args):
         return 0
     if args.action == "remove":
         name = args.name
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}", name or ""):
+            print("eng worktree: invalid worktree name", file=sys.stderr)
+            return 2
         path = Path(root) / WORKTREE_DIR / name
         if not path.exists():
             print(f"eng worktree: no such worktree {name}", file=sys.stderr)
@@ -1383,6 +1389,9 @@ def cmd_worktree(args):
         print(f"eng worktree: removed {name} (branch eng/{name} kept)")
         return 0
     if args.action == "path":
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}", args.name or ""):
+            print("eng worktree: invalid worktree name", file=sys.stderr)
+            return 2
         print(Path(root) / WORKTREE_DIR / args.name)
         return 0
     return 2

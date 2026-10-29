@@ -253,6 +253,12 @@ class WorktreeTests(EngTestCase):
         self.assertEqual(res.returncode, 2)
         self.assertIn("dirty", res.stderr)
 
+    def test_traversal_name_refused(self):
+        self.init_basic()
+        res = eng(self.tmp, "worktree", "remove", "../../etc")
+        self.assertEqual(res.returncode, 2)
+        self.assertIn("invalid", res.stderr)
+
 
 class InitTests(EngTestCase):
     def test_init_is_idempotent_and_preserves_policy(self):
