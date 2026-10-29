@@ -3,8 +3,8 @@
   "name": "ADAMANT",
   "version": "1.0.0",
   "source": {
-    "commit": "eca1a7d",
-    "committed_at": "2026-10-29T21:39:42+01:00",
+    "commit": "79dd698",
+    "committed_at": "2026-10-29T21:43:31+01:00",
     "dirty": true,
     "content_sha256": "d235c391be37c3cad7215ab883c2a2767d722257f9bb9cb79988792e20e21772"
   },
