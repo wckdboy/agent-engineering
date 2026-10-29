@@ -11,7 +11,7 @@ not a proof of correctness or security.
 | Pilot baseline `./scripts/check.sh` | pass, 3.18 s |
 | Pilot fast profile | pass, 3.24 s (fmt, clippy, test) |
 | Pilot full profile | pass, 5–7 s (check, gitleaks, Semgrep, OSV, actionlint) |
-| Kit unit/integration tests | 23 tests, 8.2 s, all pass |
+| Kit unit/integration tests | 33 tests, 14.6 s, all pass |
 | Control evaluation | 9/9 evaluated checks pass (known-bad fails; fixed passes; planted secret/SAST found; clean passes) |
 | Agent harness, deterministic stub | 2/2 tasks pass, 0.93 s |
 | Agent harness, no-op agent | 0/2 tasks pass (scoring rejects a non-change) |
@@ -21,9 +21,9 @@ not a proof of correctness or security.
 
 1. **Build-graph impact.** `eng impact` is textual. Dynamic dispatch, reflection, generated clients and
    external consumers can be missed. No LSP/SCIP/tree-sitter index is used.
-2. **Deep SAST.** Five Semgrep rules cover command injection, disabled TLS, unsafe YAML, shell
-   spawning and `child_process.exec`. No dataflow, taint tracking or CodeQL. Rules need expansion with
-   tests.
+2. **Deep SAST.** Eight Semgrep rules cover shell injection, disabled TLS, unsafe YAML, unsafe
+   pickle, shell wrappers, `execSync` and `os.system`. No dataflow, taint tracking or CodeQL. Every
+   rule has a positive and negative fixture; rules still need expansion with tests.
 3. **Secret history.** `gitleaks_history` is `false` in the pilot. The working tree is scanned, not
    every historical commit. Enable per repository after measuring history size; CI checks out full
    history but the scanner is configured for tracked files.
@@ -31,8 +31,9 @@ not a proof of correctness or security.
    untracked file with a secret is not scanned until staged.
 5. **Dependency coverage.** OSV needs a supported lockfile and network. "No package sources" is
    skipped, not passed. Transitive resolution may differ from the build's resolver.
-6. **Artifact security.** No SBOM, signature, provenance or container scan; the pilot produces no
-   release artifact. Cosign/Syft/Trivy are deliberately deferred.
+6. **Artifact security.** `release-check` records supplied artifact, SBOM, signature and provenance
+   hashes, but it does not generate an SBOM, verify a signature or produce an attestation. No
+   container scan; the pilot produces no release artifact. Cosign/Syft/Trivy remain deferred.
 7. **Performance baselines.** The kit records command durations but no benchmark suite or historical
    performance trend. `performance-engineer` defines the method; it has not been exercised on a hot
    path.

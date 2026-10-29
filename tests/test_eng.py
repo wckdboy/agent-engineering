@@ -208,6 +208,89 @@ class VerifyTests(EngTestCase):
         self.assertTrue(any("eng-no-such-scanner" in u for u in data["verdict"]["unverified"]))
 
 
+class ActionPinTests(EngTestCase):
+    def workflow(self, ref):
+        self.repo.write(".github/workflows/test.yml",
+                        f"name: t\non: [push]\njobs:\n  t:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: {ref}\n")
+        self.repo.init()
+
+    def test_pinned_sha_passes(self):
+        self.workflow("actions/checkout@11d5960a326750d5838078e36cf38b85af677262")
+        res = eng(self.tmp, "audit-actions")
+        self.assertEqual(res.returncode, 0, res.stdout)
+        self.assertIn("clean", res.stdout)
+
+    def test_mutable_tag_fails(self):
+        self.workflow("actions/checkout@v4")
+        res = eng(self.tmp, "audit-actions")
+        self.assertEqual(res.returncode, 1)
+        self.assertIn("mutable ref", res.stdout)
+
+    def test_local_action_passes(self):
+        self.workflow("./.github/actions/local")
+        res = eng(self.tmp, "audit-actions")
+        self.assertEqual(res.returncode, 0, res.stdout)
+
+    def test_docker_digest_passes(self):
+        self.workflow("docker://alpine@sha256:" + "a" * 64)
+        res = eng(self.tmp, "audit-actions")
+        self.assertEqual(res.returncode, 0, res.stdout)
+
+    def test_reviewed_exception_passes(self):
+        self.repo.write(".agents/config/actions-allow.txt", "actions/checkout@v4\n")
+        self.workflow("actions/checkout@v4")
+        res = eng(self.tmp, "audit-actions")
+        self.assertEqual(res.returncode, 0, res.stdout)
+        self.assertIn("exception", res.stdout)
+
+
+class ReleaseTests(EngTestCase):
+    def prepare_release(self):
+        self.init_basic()
+        self.repo.write(".gitignore", ".agents/evidence/\n")
+        self.repo.write("CHANGELOG.md", "## 1.2.3\n\n- test release\n")
+        self.repo.write("notes.md", "Release 1.2.3 notes\n")
+        self.repo.write("rollback.md", "Restore the previous artifact and rerun migrations.\n")
+        self.repo.write("dist/app.txt", "artifact\n")
+        self.repo.git("add", "-A")
+        self.repo.git("commit", "-qm", "release fixture")
+
+    def test_artifact_hash(self):
+        self.repo.write("dist/app.txt", "artifact\n")
+        res = eng(self.tmp, "artifact", "dist/app.txt", "--json")
+        self.assertEqual(res.returncode, 0, res.stderr)
+        data = json.loads(res.stdout)
+        self.assertEqual(data["artifacts"][0]["size"], 9)
+        self.assertEqual(len(data["artifacts"][0]["sha256"]), 64)
+
+    def test_release_requires_passing_full_evidence(self):
+        self.prepare_release()
+        res = eng(self.tmp, "release-check", "--version", "1.2.3", "--artifact", "dist/app.txt",
+                  "--notes", "notes.md", "--rollback", "rollback.md")
+        self.assertEqual(res.returncode, 1, res.stdout)
+        self.assertIn("passing full evidence", res.stdout)
+
+    def test_release_passes_and_records_evidence(self):
+        self.prepare_release()
+        self.assertEqual(eng(self.tmp, "verify", "--profile", "full").returncode, 0)
+        res = eng(self.tmp, "release-check", "--version", "1.2.3", "--artifact", "dist/app.txt",
+                  "--notes", "notes.md", "--rollback", "rollback.md")
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+        self.assertIn("PASS", res.stdout)
+        self.assertIn("release evidence", res.stdout)
+        self.assertEqual(eng(self.tmp, "evidence", "verify").returncode, 0)
+
+    def test_release_refuses_dirty_tree_and_wrong_version(self):
+        self.prepare_release()
+        self.assertEqual(eng(self.tmp, "verify", "--profile", "full").returncode, 0)
+        self.repo.write("notes.md", "Release 9.9.9 notes\n")
+        res = eng(self.tmp, "release-check", "--version", "9.9.9", "--artifact", "dist/app.txt",
+                  "--notes", "notes.md", "--rollback", "rollback.md")
+        self.assertEqual(res.returncode, 1)
+        self.assertIn("clean tree", res.stdout)
+        self.assertIn("changelog names version", res.stdout)
+
+
 class ImpactTests(EngTestCase):
     def test_references_and_tests_are_found(self):
         self.repo.write("lib.py", "def divide(a, b):\n    return a / b\n")
@@ -341,6 +424,31 @@ class ScannerTests(EngTestCase):
         semgrep = next(r for r in data["results"] if r["tool"] == "semgrep")
         self.assertEqual(semgrep["status"], "findings")
         self.assertGreaterEqual(semgrep["findings"], 1)
+
+    def test_new_rules_have_positive_and_negative_fixtures(self):
+        self.repo.write(".agents/engineering.json", json.dumps({
+            "schema": "eng-config/v1",
+            "commands": {"fast": [{"name": "true", "run": "true"}], "full": [{"name": "true", "run": "true"}]},
+            "security": {"required": ["semgrep"], "optional": []},
+        }))
+        positive = KIT / "evals" / "security-fixtures" / "positive"
+        negative = KIT / "evals" / "security-fixtures" / "negative"
+        for path in positive.iterdir():
+            shutil.copy2(path, self.tmp / path.name)
+        res = eng(self.tmp, "security", "--json")
+        self.assertEqual(res.returncode, 1, res.stdout + res.stderr)
+        data = json.loads(res.stdout)
+        semgrep = next(r for r in data["results"] if r["tool"] == "semgrep")
+        self.assertGreaterEqual(semgrep["findings"], 3)
+        for path in (self.tmp / p.name for p in positive.iterdir()):
+            path.unlink()
+        for path in negative.iterdir():
+            shutil.copy2(path, self.tmp / path.name)
+        res = eng(self.tmp, "security", "--json")
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+        data = json.loads(res.stdout)
+        semgrep = next(r for r in data["results"] if r["tool"] == "semgrep")
+        self.assertEqual(semgrep["status"], "pass")
 
 
 class GitleaksTests(EngTestCase):

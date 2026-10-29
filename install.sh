@@ -58,7 +58,7 @@ cp -R "$SELF/ci/." "$TARGET/.agents/ci/"
 cp -R "$SELF/templates/." "$TARGET/.agents/templates/"
 chmod 755 "$TARGET/.agents/hooks/"* 2>/dev/null || true
 
-for f in semgrep.yml gitleaks.toml guard-allow.txt; do
+for f in semgrep.yml gitleaks.toml guard-allow.txt actions-allow.txt; do
   if [ ! -f "$TARGET/.agents/config/$f" ]; then
     cp "$SELF/configs/$f" "$TARGET/.agents/config/$f"
   elif [ "$FORCE" = 1 ] && [ "$f" != "guard-allow.txt" ]; then

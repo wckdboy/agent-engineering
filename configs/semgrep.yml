@@ -37,6 +37,36 @@ rules:
       - pattern-not: yaml.load($DATA, Loader=yaml.SafeLoader)
       - pattern-not: yaml.load($DATA, Loader=yaml.CSafeLoader)
 
+  - id: eng-python-os-system
+    languages: [python]
+    message: os.system runs a shell command; use subprocess with an argv list.
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: "CWE-78: OS Command Injection"
+      confidence: HIGH
+    pattern: os.system(...)
+
+  - id: eng-python-pickle-loads
+    languages: [python]
+    message: pickle.loads can execute code from untrusted bytes. Use a data-only format.
+    severity: WARNING
+    metadata:
+      category: security
+      cwe: "CWE-502: Deserialization of Untrusted Data"
+      confidence: HIGH
+    pattern: pickle.loads(...)
+
+  - id: eng-js-child-process-execsync
+    languages: [javascript, typescript]
+    message: child_process.execSync runs a shell command; use execFile/spawn with an argv list.
+    severity: WARNING
+    metadata:
+      category: security
+      cwe: "CWE-78: OS Command Injection"
+      confidence: MEDIUM
+    pattern: $CP.execSync(...)
+
   - id: eng-rust-command-shell
     languages: [rust]
     message: Spawning a shell re-introduces quoting and injection risk. Prefer Command::new(argv0).args([...]).
