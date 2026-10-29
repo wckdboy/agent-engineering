@@ -18,7 +18,7 @@ fi
 
 echo "== actionlint"
 if command -v actionlint >/dev/null 2>&1; then
-  actionlint ci/agent-verify.yml
+  actionlint ci/agent-verify.yml .github/workflows/ci.yml
 else
   echo "skip: actionlint not installed"
 fi
