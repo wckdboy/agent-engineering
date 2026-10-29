@@ -54,12 +54,6 @@ download manifest.
   statement.
 - Keep repository statuses honest: `green`, `review`, `blocked` or `template`.
 
-## Deploy
-
-The site is plain files. Any static host works. GitHub Pages can deploy the `site/` directory with
-the workflow in `.github/workflows/pages.yml`; the workflow rebuilds first so the deployed source
-metadata is current.
-
 ## Design constraints
 
 - No external fonts, scripts, images or analytics. The portal works offline and leaks no referrer.
@@ -68,42 +62,39 @@ metadata is current.
   script.
 - Content is escaped; only the repository-owned skill Markdown is rendered as HTML.
 
-## Custom domain — adamant.cc
+## Hosting — Cloudflare Workers
 
-GitHub Pages is configured with `cname=adamant.cc`; the site artifact contains `CNAME`. The domain
-currently uses Cloudflare nameservers but has **no apex A/AAAA or www CNAME records**, so it does not
-resolve yet. Add one of these DNS configurations at Cloudflare:
+The portal is deployed with Wrangler as a Workers static-assets project. `wrangler.jsonc` points at
+`site/` and attaches both custom domains:
 
-Recommended (apex A/AAAA, DNS-only, not proxied):
-
-```text
-A     @    185.199.108.153
-A     @    185.199.109.153
-A     @    185.199.110.153
-A     @    185.199.111.153
-AAAA  @    2606:50c0:8000::153
-AAAA  @    2606:50c0:8001::153
-AAAA  @    2606:50c0:8002::153
-AAAA  @    2606:50c0:8003::153
-CNAME www  wckdboy.github.io
+```jsonc
+"name": "adamant",
+"assets": { "directory": "site" },
+"routes": [
+  { "pattern": "adamant.cc", "custom_domain": true },
+  { "pattern": "www.adamant.cc", "custom_domain": true }
+]
 ```
 
-Or, if Cloudflare CNAME flattening is preferred, use a single apex `CNAME @ -> wckdboy.github.io`
-plus the `www` CNAME. Leave the proxy **off** (grey cloud) until GitHub has issued the certificate;
-then enable HTTPS enforcement in the Pages settings. A proxied record can work, but it adds an SSL
-mode and certificate-validation failure mode that is not needed.
-
-After DNS resolves, verify:
+Deploy:
 
 ```sh
-dig +short adamant.cc
-curl -sSI https://adamant.cc/ | head
+npx wrangler deploy
 ```
 
-The GitHub Pages API reports `cname: adamant.cc`; certificate state remains empty until the DNS
-records exist.
+Wrangler/Cloudflare created the proxied apex and `www` records for `adamant.cc`. Verify with a public
+resolver, not only the local cache:
 
-## Agent endpoints before DNS is live
+```sh
+dig +short @1.1.1.1 adamant.cc
+curl -sSI --resolve adamant.cc:443:$(dig +short @1.1.1.1 adamant.cc | head -1) https://adamant.cc/ | head
+```
+
+`site/CNAME` is intentionally absent: GitHub Pages is not the host. If a local resolver still returns
+NXDOMAIN after the records exist, flush it or wait for the negative-cache TTL; `@1.1.1.1` and the
+Cloudflare DoH endpoint are authoritative for propagation checks.
+
+## Raw agent endpoints
 
 The raw files work as soon as the repository is pushed:
 

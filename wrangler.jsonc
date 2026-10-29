@@ -1,0 +1,15 @@
+{
+  "name": "adamant",
+  "compatibility_date": "2026-10-23",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "site"
+  },
+  "routes": [
+    { "pattern": "adamant.cc", "custom_domain": true },
+    { "pattern": "www.adamant.cc", "custom_domain": true }
+  ]
+}

@@ -83,7 +83,7 @@ make serve          # http://localhost:8080
 ```
 
 It is generated from the real skills and content, tested for determinism and local links, and
-deployed as plain static files at [adamant.cc](https://adamant.cc/).
+deployed with Wrangler to Cloudflare Workers at [adamant.cc](https://adamant.cc/).
 
 ## Documentation
 
