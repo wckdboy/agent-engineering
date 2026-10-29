@@ -165,6 +165,22 @@ class VerifyTests(EngTestCase):
         self.assertIn("command:false", data["verdict"]["required_failures"])
         self.assertEqual(data["commands"][0]["exit_code"], 1)
 
+    def test_output_is_redacted_in_logs(self):
+        self.init_basic()
+        self.repo.write(".agents/engineering.json", json.dumps({
+            "schema": "eng-config/v1",
+            "commands": {"fast": [{"name": "print-secret",
+                                    "run": "python3 -c \"print('AKIAQ7Z2X4M9P1L8V3N6')\""}],
+                          "full": [{"name": "true", "run": "true"}]},
+            "security": {"required": [], "optional": []},
+        }))
+        res = eng(self.tmp, "verify", "--profile", "fast")
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+        log = next((self.tmp / ".agents" / "evidence").glob("*/00-print-secret.log"))
+        text = log.read_text()
+        self.assertNotIn("AKIAQ7Z2X4M9P1L8V3N6", text)
+        self.assertIn("REDACTED:aws-access-key", text)
+
     def test_tampering_is_detected(self):
         self.init_basic()
         self.assertEqual(eng(self.tmp, "verify", "--profile", "fast").returncode, 0)

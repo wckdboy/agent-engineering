@@ -34,9 +34,9 @@ assuming a monorepo.
 5. **Large working trees punish naive context loading.** `polykrom` is 7.3 GB with `target/`; any
    default whole-repository scan or dump is wasteful. The kit uses tracked-file inventories, exact
    symbol search and capped output.
-6. **CI actions are not uniformly pinned.** The new kit template pins SHAs; the existing `sovware`
-   workflow still uses floating major tags for checkout/toolchain/cache/setup-python. This is a
-   recorded gap, not silently changed.
+6. **CI actions are not uniformly pinned.** The new kit template pins SHAs, and the pilot's
+   checkout/toolchain/cache/setup-python steps were pinned during rollout. Other repositories still
+   use floating tags; this is a recorded gap, not silently changed.
 
 ## Assumptions (not proven)
 

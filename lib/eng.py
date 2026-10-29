@@ -185,6 +185,13 @@ def tail(text, lines=40, chars=6000):
     return out
 
 
+def redact_secrets(text):
+    """Remove high-signal credential shapes from logs and evidence tails."""
+    for rule, pattern in SECRET_PATTERNS:
+        text = pattern.sub(f"[REDACTED:{rule}]", text)
+    return text
+
+
 def tracked_files(root, include_untracked=False):
     res = git(root, "ls-files", "-z")
     if res.ok:
@@ -842,7 +849,7 @@ def run_scanner(root, cfg, name, outdir):
         res = sh(args, cwd=root, timeout=c.get("timeout", 600), env=env)
         result["exit_code"] = res.code
         result["duration_s"] = round(res.dur, 2)
-        logfile.write_text(res.out + res.err, encoding="utf-8")
+        logfile.write_text(redact_secrets(res.out + res.err), encoding="utf-8")
         result["log"] = str(logfile.relative_to(outdir.parent))
         if outfile.exists():
             try:
@@ -872,7 +879,7 @@ def run_scanner(root, cfg, name, outdir):
         res = sh(args, cwd=root, timeout=c.get("timeout", 600), env=env)
         result["exit_code"] = res.code
         result["duration_s"] = round(res.dur, 2)
-        logfile.write_text(res.out + res.err, encoding="utf-8")
+        logfile.write_text(redact_secrets(res.out + res.err), encoding="utf-8")
         result["log"] = str(logfile.relative_to(outdir.parent))
         if outfile.exists():
             try:
@@ -900,7 +907,7 @@ def run_scanner(root, cfg, name, outdir):
         res = sh(args, cwd=root, timeout=c.get("timeout", 900), env=env)
         result["exit_code"] = res.code
         result["duration_s"] = round(res.dur, 2)
-        logfile.write_text(res.out + res.err, encoding="utf-8")
+        logfile.write_text(redact_secrets(res.out + res.err), encoding="utf-8")
         result["log"] = str(logfile.relative_to(outdir.parent))
         count = 0
         if outfile.exists():
@@ -935,7 +942,7 @@ def run_scanner(root, cfg, name, outdir):
         res = sh([exe], cwd=root, timeout=c.get("timeout", 300), env=env)
         result["exit_code"] = res.code
         result["duration_s"] = round(res.dur, 2)
-        logfile.write_text(res.out + res.err, encoding="utf-8")
+        logfile.write_text(redact_secrets(res.out + res.err), encoding="utf-8")
         result["log"] = str(logfile.relative_to(outdir.parent))
         if res.timed_out:
             result["status"] = "error"; result["reason"] = "timeout"
@@ -953,7 +960,7 @@ def run_scanner(root, cfg, name, outdir):
                  cwd=root, timeout=c.get("timeout", 300), env=env)
         result["exit_code"] = res.code
         result["duration_s"] = round(res.dur, 2)
-        logfile.write_text(res.out + res.err, encoding="utf-8")
+        logfile.write_text(redact_secrets(res.out + res.err), encoding="utf-8")
         result["log"] = str(logfile.relative_to(outdir.parent))
         try:
             data = json.loads(res.out or "[]")
@@ -1141,7 +1148,7 @@ def run_command(root, spec, logdir, index):
     started = now_iso()
     res = sh(str(spec["run"]), cwd=root, timeout=timeout, shell=True,
              env={"ENG_PROFILE": os.environ.get("ENG_PROFILE", ""), "CI": os.environ.get("CI", "")})
-    output = res.out + ("\n" + res.err if res.err else "")
+    output = redact_secrets(res.out + ("\n" + res.err if res.err else ""))
     logfile.write_text(output, encoding="utf-8")
     status = "pass" if res.ok else ("timeout" if res.timed_out else "fail")
     return {

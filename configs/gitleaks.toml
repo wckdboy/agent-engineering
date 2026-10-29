@@ -9,6 +9,8 @@ useDefault = true
 description = "eng control fixtures"
 paths = [
   '''(^|/)tests/fixtures/.*''',
+  '''(^|/)tests/test_eng.py''',
   '''(^|/)evals/fixtures/.*''',
   '''(^|/)evals/control-fixture/.*''',
+  '''(^|/)evals/agent/fixture/.*''',
 ]

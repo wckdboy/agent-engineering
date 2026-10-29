@@ -34,5 +34,7 @@ successful. `eng evidence verify` recomputes content hashes and checks the chain
 - A dirty working tree is recorded; the evidence describes those bytes, not a commit.
 - Preserve logs with the record. If attaching evidence to a review, attach the JSON and the
   failing log, not a screenshot of a terminal.
+- Logs redact high-signal credential patterns before writing. They can still contain other sensitive
+  data from test output; treat evidence artifacts as confidential.
 - `eng evidence verify` failure means the record or chain was altered. Investigate; do not
   regenerate over it.

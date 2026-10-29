@@ -29,8 +29,9 @@ Validation actually executed:
 actionlint .github/workflows/ci.yml         # pass
 ```
 
-Not executed: the modified GitHub Actions workflow on a GitHub runner. The local `actionlint` result
-is syntax/static validation only.
+CI installation commands were exercised locally with Go 1.27.3 and the same pinned versions; the full
+profile passed with those binaries on `PATH`. Not executed: the modified GitHub Actions workflow on a
+GitHub runner. The local `actionlint` result is syntax/static validation only.
 
 ### Rollback
 

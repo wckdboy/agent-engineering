@@ -11,7 +11,7 @@ not a proof of correctness or security.
 | Pilot baseline `./scripts/check.sh` | pass, 3.18 s |
 | Pilot fast profile | pass, 3.24 s (fmt, clippy, test) |
 | Pilot full profile | pass, 5–7 s (check, gitleaks, Semgrep, OSV, actionlint) |
-| Kit unit/integration tests | 20 tests, 7.4 s, all pass |
+| Kit unit/integration tests | 21 tests, 7.9 s, all pass |
 | Control evaluation | 9/9 evaluated checks pass (known-bad fails; fixed passes; planted secret/SAST found; clean passes) |
 | Agent harness, deterministic stub | 2/2 tasks pass, 0.93 s |
 | Agent harness, no-op agent | 0/2 tasks pass (scoring rejects a non-change) |
@@ -47,11 +47,12 @@ not a proof of correctness or security.
     separate process from editing the same files. Integration remains a human/agent discipline.
 12. **Hooks are bypassable.** `git commit --no-verify` skips the guard. CI is the enforcement point.
 13. **CI has not run on GitHub.** `sovware`'s workflow was edited and validated with local
-    `actionlint`; the new job has not executed on a GitHub runner. Scanner installation paths
-    (`go install` / pip) are therefore locally designed but not CI-verified.
-14. **Action pinning is uneven.** The kit template pins SHAs. The existing `sovware` workflow still
-    uses `actions/checkout@v4`, `dtolnay/rust-toolchain@stable`, `Swatinem/rust-cache@v2` and
-    `actions/setup-python@v5`. Only the new upload step is pinned. zizmor would flag this; triage it
+    `actionlint`; the scanner install commands were exercised locally with Go 1.27.3 and Python
+    3.12-compatible Semgrep, and the full gate was run with those binaries on `PATH`. The job itself
+    has not executed on a GitHub runner.
+14. **Action pinning is uneven.** The kit template pins SHAs, and the pilot's checkout, Rust
+    toolchain, cache, setup-python and upload steps are now pinned. Other repositories and the
+    vendored actions in some workflows remain unpinned. zizmor was not installed or run; triage it
     before claiming supply-chain hardening.
 15. **Agent evaluation is a smoke test.** Two tasks, one deterministic stub and one no-op check. It is
     not a model benchmark, has no statistical power, and does not capture provider cost.
