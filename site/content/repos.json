@@ -6,9 +6,9 @@
     "branch": "main",
     "status": "green",
     "gate": "make check",
-    "evidence": "33 tests, 9/9 control checks, agent harness 2/2",
-    "remote": "local source",
-    "notes": "The source of truth for skills, CLI, configs and this portal. Changes here are installed into repositories; they are not product changes."
+    "evidence": "GitHub Actions kit-ci passing; Pages deployed; 42 tests",
+    "remote": "wckdboy/agent-engineering",
+    "notes": "The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes."
   },
   {
     "id": "sovware",

@@ -3,10 +3,10 @@
   "name": "ADAMANT",
   "version": "1.0.0",
   "source": {
-    "commit": "79dd698",
-    "committed_at": "2026-10-29T21:43:31+01:00",
+    "commit": "17af941",
+    "committed_at": "2026-10-29T21:49:10+01:00",
     "dirty": true,
-    "content_sha256": "d235c391be37c3cad7215ab883c2a2767d722257f9bb9cb79988792e20e21772"
+    "content_sha256": "d8ed0b84f2c9d867bb154ee04067a421796f214827edb7ddcfc0ca3b0a072378"
   },
   "start": {
     "read_first": [
@@ -923,9 +923,9 @@
       "branch": "main",
       "status": "green",
       "gate": "make check",
-      "evidence": "33 tests, 9/9 control checks, agent harness 2/2",
-      "remote": "local source",
-      "notes": "The source of truth for skills, CLI, configs and this portal. Changes here are installed into repositories; they are not product changes."
+      "evidence": "GitHub Actions kit-ci passing; Pages deployed; 42 tests",
+      "remote": "wckdboy/agent-engineering",
+      "notes": "The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes."
     },
     {
       "id": "sovware",
