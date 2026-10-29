@@ -10,11 +10,18 @@ import sys
 import tempfile
 import textwrap
 import unittest
+import importlib.util
 from pathlib import Path
 
 KIT = Path(__file__).resolve().parents[1]
 ENG = KIT / "bin" / "eng"
 CONFIGS = KIT / "configs"
+
+sys.path.insert(0, str(KIT / "lib"))
+_eng_spec = importlib.util.spec_from_file_location("eng_kit", KIT / "lib" / "eng.py")
+assert _eng_spec is not None and _eng_spec.loader is not None
+eng_lib = importlib.util.module_from_spec(_eng_spec)
+_eng_spec.loader.exec_module(eng_lib)
 
 
 def run(cmd, cwd, timeout=180):
@@ -473,6 +480,51 @@ class GitleaksTests(EngTestCase):
         gl = next(r for r in data["results"] if r["tool"] == "gitleaks")
         self.assertEqual(gl["status"], "findings")
         self.assertGreaterEqual(gl["findings"], 1)
+
+
+class LockfileDiscovery(unittest.TestCase):
+    """osv-scanner is driven by explicit lockfiles so a worktree checkout still scans."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="eng-lock-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.repo = Repo(self.tmp)
+
+    def test_finds_project_lockfiles_and_skips_vendored_trees(self):
+        self.repo.write("Cargo.lock", "[[package]]\nname = \"fixture\"\n")
+        self.repo.write("web/package-lock.json", "{\"lockfileVersion\": 3}\n")
+        self.repo.write("README.md", "# fixture\n")
+        self.repo.write(".gitignore", "generated/\n")
+        # Vendored, generated and evidence copies of a lockfile are not project inputs.
+        self.repo.write("web/node_modules/dep/package-lock.json", "{}\n")
+        self.repo.write(".worktrees/task/Cargo.lock", "x\n")
+        self.repo.write(".agents/evidence/run/gitleaks-tree/Cargo.lock", "x\n")
+        self.repo.init()
+        # Untracked but real lockfiles count; ignored ones do not.
+        self.repo.write("svc/uv.lock", "version = 1\n")
+        self.repo.write("generated/pnpm-lock.yaml", "lockfileVersion: 9\n")
+        self.assertEqual(eng_lib.lockfiles(self.tmp), ["Cargo.lock", "svc/uv.lock", "web/package-lock.json"])
+
+    def test_empty_repository_falls_back_to_a_source_scan(self):
+        self.repo.write("README.md", "# fixture\n")
+        self.repo.init()
+        self.assertEqual(eng_lib.lockfiles(self.tmp), [])
+
+    def test_scan_args_keep_the_walk_then_fall_back_to_lockfiles(self):
+        self.repo.write("Cargo.lock", "[[package]]\nname = \"fixture\"\n")
+        # A colon in a directory name must not read as an explicit parser type.
+        self.repo.write("services/api:v2/package-lock.json", "{\"lockfileVersion\": 3}\n")
+        self.repo.init()
+        out = self.tmp / "out.json"
+        walk = eng_lib.osv_scan_args("osv-scanner", self.tmp, out)
+        self.assertIn("--recursive", walk)
+        self.assertEqual(walk[-1], str(self.tmp))
+        self.assertNotIn("-L", walk, "the walk must stay the first pass, unfiltered")
+
+        fallback = eng_lib.osv_lockfile_args("osv-scanner", self.tmp, out)
+        explicit = [fallback[i + 1] for i, a in enumerate(fallback) if a == "-L"]
+        self.assertEqual(explicit, [":Cargo.lock", ":services/api:v2/package-lock.json"])
+        self.assertNotIn(str(self.tmp), fallback, "the fallback must not re-run the walk")
 
 
 if __name__ == "__main__":
