@@ -1,6 +1,6 @@
 # Rollout and rollback
 
-## Phase 1 — pilot (complete locally)
+## Phase 1 — pilot (complete, pushed)
 
 Target: `sovware` at `87fdfd6b1889` (working tree already had a user edit to `README.md`; it was not
 touched).
