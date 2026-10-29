@@ -5,9 +5,9 @@
   "repository": "https://github.com/wckdboy/agent-engineering",
   "version": "1.0.0",
   "source": {
-    "commit": "b6b4edd",
-    "committed_at": "2026-10-29T21:52:15+01:00",
-    "dirty": true,
+    "commit": "a569979",
+    "committed_at": "2026-10-29T22:05:06+01:00",
+    "dirty": false,
     "content_sha256": "d8ed0b84f2c9d867bb154ee04067a421796f214827edb7ddcfc0ca3b0a072378"
   },
   "start": {
