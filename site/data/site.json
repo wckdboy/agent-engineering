@@ -4,10 +4,10 @@
   "homepage": "https://adamant.cc",
   "repository": "https://github.com/wckdboy/agent-engineering",
   "tagline": "The agent engineering portal: controls, skills and evidence to build at the level the repository requires.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "source": {
-    "commit": "c151e4f",
-    "committed_at": "2026-10-29T23:33:20+01:00",
+    "commit": "5527fe3",
+    "committed_at": "2026-10-29T23:49:37+01:00",
     "dirty": true,
     "content_sha256": "d8ed0b84f2c9d867bb154ee04067a421796f214827edb7ddcfc0ca3b0a072378"
   },
@@ -1780,8 +1780,8 @@
   },
   "download": {
     "file": "eng-kit.zip",
-    "sha256": "1666b14652bd953c2b2661d38edfb48c17585140945bb2d9ba869b4b0257e4bc",
-    "size": 59064,
+    "sha256": "56f9744654481aa97f2213b8685c782260dbec57437f9181d7b3e18187d37c21",
+    "size": 59143,
     "entries": 29,
     "files": [
       "AGENTS.md",

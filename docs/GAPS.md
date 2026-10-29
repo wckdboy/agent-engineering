@@ -31,7 +31,11 @@ not a proof of correctness or security.
 4. **Untracked files.** gitleaks scans tracked files. The pre-commit guard scans staged files. A new
    untracked file with a secret is not scanned until staged.
 5. **Dependency coverage.** OSV needs a supported lockfile and network. "No package sources" is
-   skipped, not passed. Transitive resolution may differ from the build's resolver.
+   skipped, not passed. Transitive resolution may differ from the build's resolver. Lockfiles are
+   named explicitly when the recursive walk finds nothing, so a `.worktrees/<name>` checkout —
+   invisible to the walk because the parent repository ignores `.worktrees/` — is still scanned;
+   inside such a checkout, inputs outside the enumerated lockfile set (SBOMs, `pom.xml`,
+   `bun.lock`) remain unscanned until the work is integrated into the primary checkout.
 6. **Artifact security.** `release-check` records supplied artifact, SBOM, signature and provenance
    hashes, but it does not generate an SBOM, verify a signature or produce an attestation. No
    container scan; the pilot produces no release artifact. Cosign/Syft/Trivy remain deferred.

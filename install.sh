@@ -66,7 +66,9 @@ for f in semgrep.yml gitleaks.toml guard-allow.txt actions-allow.txt; do
   fi
 done
 
-printf '%s\n' "1.0.0" > "$TARGET/.agents/VERSION"
+# Read the version from the kit instead of hardcoding it here, so an installed
+# copy can never report a release it is not.
+printf '%s\n' "$(cat "$SELF/VERSION" 2>/dev/null || echo 0.0.0)" > "$TARGET/.agents/VERSION"
 cp "$SELF/README.agents.md" "$TARGET/.agents/README.md"
 
 INIT_ARGS=""

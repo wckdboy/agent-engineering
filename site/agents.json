@@ -3,10 +3,10 @@
   "name": "ADAMANT",
   "homepage": "https://adamant.cc",
   "repository": "https://github.com/wckdboy/agent-engineering",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "source": {
-    "commit": "c151e4f",
-    "committed_at": "2026-10-29T23:33:20+01:00",
+    "commit": "5527fe3",
+    "committed_at": "2026-10-29T23:49:37+01:00",
     "dirty": true,
     "content_sha256": "d8ed0b84f2c9d867bb154ee04067a421796f214827edb7ddcfc0ca3b0a072378"
   },
