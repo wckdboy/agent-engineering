@@ -62,12 +62,13 @@ Gitleaks/Semgrep pass after narrow suppressions; OSV reports 15 advisories and b
 4. Add contract fixtures for the design format, CLI and file compatibility before enabling full.
 5. Enable hooks only after the fast profile is reliably under the budget.
 
-## Phase 3 — infrastructure (`platform`)
+## Phase 3 — infrastructure (`platform`, local branch `eng/portable-controls`)
 
-- Add actionlint/zizmor gates and pin workflow actions.
-- Use `eng` to record config/runbook changes; do not add credentials.
-- Keep the environment gates (`*_CONFIGURED`) as the authorization boundary; the kit is not a
-  substitute for them.
+Installed the read-only quality gate: all 9 action references are pinned, zizmor and actionlint pass,
+and the fast/full profiles run in 0.5 s / 3.2 s. `scripts/audit-config.sh` still reports an
+organization-level failure: WCKDai does not require SHA-pinned actions. That policy change is an
+owner decision; the repository itself passes. Keep the environment gates (`*_CONFIGURED`) as the
+authorization boundary; the kit is not a substitute for them.
 
 ## Phase 4 — other languages
 
