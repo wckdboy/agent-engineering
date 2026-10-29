@@ -7,7 +7,8 @@ successful. `eng evidence verify` recomputes content hashes and checks the chain
 ## Record shape (`eng-evidence/v1`)
 
 - `id`, `started_at`, `finished_at`, `profile`, `command`, `tool.version`
-- `git`: HEAD, branch, dirty state, diff hash, untracked count/hash
+- `git`: HEAD, branch, dirty state, diff hash, untracked count/hash; `git_before` records the state
+  before commands ran, so a check that modified the tree is visible
 - `config`: path, content hash, whether it existed
 - `commands[]`: name, exact command, required flag, status, exit code, duration, full-output hash,
   log path, last 30 lines
