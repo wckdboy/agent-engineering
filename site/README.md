@@ -102,3 +102,17 @@ curl -sSI https://adamant.cc/ | head
 
 The GitHub Pages API reports `cname: adamant.cc`; certificate state remains empty until the DNS
 records exist.
+
+## Agent endpoints before DNS is live
+
+The raw files work as soon as the repository is pushed:
+
+```text
+https://raw.githubusercontent.com/wckdboy/agent-engineering/main/site/agents.json
+https://raw.githubusercontent.com/wckdboy/agent-engineering/main/site/llms.txt
+https://raw.githubusercontent.com/wckdboy/agent-engineering/main/site/downloads/eng-kit.zip
+```
+
+`creed.sh` is an alternative domain with the same Cloudflare nameservers and no DNS records. The
+portal is branded ADAMANT, so `adamant.cc` is the primary; switching to `creed.sh` would be one Pages
+`cname` change plus DNS records, but it would split the name from the domain.

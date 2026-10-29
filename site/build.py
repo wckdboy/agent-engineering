@@ -301,6 +301,8 @@ def main():
     site = {
         "schema": "agent-engineering-site/v1",
         "title": "ADAMANT",
+        "homepage": "https://adamant.cc",
+        "repository": "https://github.com/wckdboy/agent-engineering",
         "tagline": "The agent engineering portal: controls, skills and evidence to build at the level the repository requires.",
         "version": VERSION,
         "source": {"commit": commit, "committed_at": commit_date, "dirty": dirty, "content_sha256": content_hash},
@@ -325,6 +327,8 @@ def main():
     agents = {
         "schema": "agent-engineering/v1",
         "name": site["title"],
+        "homepage": site["homepage"],
+        "repository": site["repository"],
         "version": VERSION,
         "source": site["source"],
         "start": {
@@ -355,6 +359,9 @@ def main():
         "> ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.",
         "",
         f"Source: `{commit}` · schema `{content_hash[:16]}` · kit version `{VERSION}`.",
+        "",
+        f"Homepage: {site['homepage']}  ",
+        f"Repository: {site['repository']}",
         "",
         "## Start here",
         "1. Read `AGENTS.md` first. It is the repository's authoritative policy.",
