@@ -47,14 +47,13 @@ not a proof of correctness or security.
 11. **Ownership enforcement.** `eng worktree` records an owner and caps concurrency, but cannot stop a
     separate process from editing the same files. Integration remains a human/agent discipline.
 12. **Hooks are bypassable.** `git commit --no-verify` skips the guard. CI is the enforcement point.
-13. **CI has not run on GitHub.** `sovware`'s workflow was edited and validated with local
-    `actionlint`; the scanner install commands were exercised locally with Go 1.27.3 and Python
-    3.12-compatible Semgrep, and the full gate was run with those binaries on `PATH`. The job itself
-    has not executed on a GitHub runner.
-14. **Action pinning is uneven.** The kit template pins SHAs, and the pilot's checkout, Rust
-    toolchain, cache, setup-python and upload steps are now pinned. Other repositories and the
-    vendored actions in some workflows remain unpinned. zizmor was not installed or run; triage it
-    before claiming supply-chain hardening.
+13. **Only the pilot's CI has run.** `sovware` run 40944146737 (and the follow-up 40946781919) passed
+    on GitHub and uploaded evidence. `polykrom` and `platform` changes are on local review branches
+    and have not been pushed or run by their CI. The kit's own CI has not run on GitHub.
+14. **Action pinning is uneven.** The kit template, `sovware`, and `platform` pin actions by SHA;
+    `platform` runs zizmor and `eng audit-actions`. `polykrom` still has some upstream floating
+    references, and the WCKDai organization policy does not require SHA pinning (the read-only
+    platform audit reports this). Changing that policy is an owner decision.
 15. **Agent evaluation is a smoke test.** Two tasks, one deterministic stub and one no-op check. It is
     not a model benchmark, has no statistical power, and does not capture provider cost.
 16. **Harness discovery is lightly tested.** The installer creates `.claude/skills` and
@@ -66,19 +65,32 @@ not a proof of correctness or security.
 18. **No cross-repository metrics store.** Each repository has its own evidence chain. Aggregating
     pass rate, cost, latency and escaped regressions across the workspace is a later step.
 
+## Rollout findings (2026-10-29)
+
+- **sovware** — two GitHub Actions runs passed (`40944146737`, `40946781919`); the full job installed
+  scanners, ran the full gate and uploaded `.agents/evidence/`. Local warm fast/full: 0.8 s / 5–6 s.
+- **polykrom** — `eng detect` 1.8 s; fast profile 22 s after the io test binary was built; contract
+  fixture `legacy-solvecraft-v1.solidcraft` loads and is re-tagged on save. Gitleaks and Semgrep are
+  clean after narrow, documented false-positive suppressions. OSV reports **15 dependency advisories**
+  (cgmath, proc-macro-error, rustls-webpki, tokio, ttf-parser, webpki-root-certs, zip, zbus_names,
+  zvariant and transitive packages); the authoritative full `cargo xtask ci` was not run.
+- **platform** — fast 0.5 s, full 3.2 s; all 9 action references are pinned; zizmor and actionlint
+  report no findings. `audit-config.sh` still fails the organization-level "require SHA-pinned
+  actions" check; that is outside the repository.
+- **kit** — 33 tests, 9/9 control checks, agent stub 2/2, no-op 0/2; release-check and artifact
+  hashing have positive and failure fixtures.
+
 ## Rollout priorities
 
-1. **Pilot follow-up (sovware).** Push the branch and confirm the new CI job on GitHub. Fix any
-   runner/tool installation mismatch. Decide on history scanning and pin the existing actions.
-2. **Large-repo validation (polykrom).** Time `detect`, `impact`, `gitleaks` and Semgrep on the 7.3 GB
-   tree; confirm `target/` is excluded. Add contract fixtures for the design format and CLI. Add a
-   kernel-focused full profile.
-3. **Infrastructure repo (platform).** Add zizmor/actionlint gates and pin workflow actions. Use the
-   kit to evidence config changes; do not put credentials in the repository.
-4. **Language breadth.** Add Node/TypeScript (`autobot-www`), Swift/macOS (`Mosaic`, `omnie-*`) and
-   Kotlin (`autobot`) command profiles. Measure whether a shared fast profile is meaningful or each
-   repo needs its own.
-5. **Release path.** Once an artifact exists, add SBOM, signature verification and a release-verifier
-   checklist bound to the artifact digest.
-6. **Metrics.** Export evidence summaries to a small local index (not a SaaS) and track accepted
-   changes, escaped regressions, median/tail latency and failed integrations. Keep the raw records.
+1. **Polykrom.** Triage the 15 OSV advisories (upgrade, patch or a dated owner risk acceptance);
+   run the authoritative `cargo xtask ci`; push `eng/portable-controls` as a PR. The fast gate and
+   contract fixture are already verified locally.
+2. **Platform.** Get the organization's "require SHA-pinned actions" policy enabled by the owner;
+   push `eng/portable-controls` and confirm the new quality workflow. `audit-config.sh` should join
+   the full profile when org access is available.
+3. **Release artifacts.** Use `eng release-check` on the first real artifact; add SBOM/signature/
+   provenance verification rather than only recording their hashes.
+4. **Language breadth.** Add Node/TypeScript, Swift/macOS and Kotlin profiles; measure each fast gate
+   instead of copying Rust commands.
+5. **Metrics.** Export evidence summaries to a small local index and track accepted changes, escaped
+   regressions, median/tail latency and failed integrations. Keep the raw records.

@@ -47,7 +47,13 @@ rm -rf .agents .claude/skills .opencode/skills .worktrees
 The user's pre-existing `README.md` edit is untouched. Evidence records are under `.agents/evidence/`
 and are removed with `.agents/`; preserve them before rollback if they are needed as an audit trail.
 
-## Phase 2 — large repository (`polykrom`)
+## Phase 2 — large repository (`polykrom`, local branch `eng/portable-controls`)
+
+Installed with a bounded fast profile (`fmt`, layers, lists, assets, io tests) and an authoritative
+but unrun full profile (`cargo xtask ci`). `eng detect` took 1.8 s and the fast gate 22 s once the io
+test binary was built. A legacy `solvecraft/1` fixture was added at
+`crates/io/tests/fixtures/legacy-solvecraft-v1.solidcraft` with a test that loads and re-tags it.
+Gitleaks/Semgrep pass after narrow suppressions; OSV reports 15 advisories and blocks the full gate.
 
 1. Install without hooks first; run `eng detect` and `eng impact` only (read-only).
 2. Configure fast commands from the existing `plan/` and CI; avoid a full `cargo test` in the fast
