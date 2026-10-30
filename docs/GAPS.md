@@ -21,8 +21,9 @@ not a proof of correctness or security.
 
 - **Polykrom 0.21.0-rc.1** is published as a GitHub prerelease from commit `0f8f505`: 45 assets,
   every package checksum verified, macOS app/CLI and the Flatpak/Snap X11 and Wayland smokes
-  exercised. It is **not** stable: #289, #293, #294, #295, #296 and #297 remain open, and there is
-  no real Polykrom product benchmark. The full local `cargo xtask ci` hit the known flaky
+  exercised. It is **not** stable: #293, #294, #296 and #297 remain open, and there is no real
+  Polykrom product benchmark. #289 and #295 merged on main after the RC (`a016118`, `f8e1d19`) and
+  are not in RC.1. The full local `cargo xtask ci` hit the known flaky
   `agent_chat::discover` test once; the test and the full UI suite pass on rerun, and every
   release-workflow job passed. Windows and FreeBSD packages were built but not executed locally.
 - **PolyCore** remains Phase 0: #29–#31 are open and the scorecard needs a fresh run.

@@ -39,9 +39,9 @@
     "branch": "main",
     "status": "green",
     "gate": "./.agents/bin/eng verify --profile fast",
-    "evidence": "#281/#282/#287/#298 merged; 0.21.0-rc.1 published; full + security gates pass; #288 fixed; 8 advisories accepted",
+    "evidence": "#281/#282/#287/#298/#299/#300 merged; 0.21.0-rc.1 published; full + security gates pass; #288/#289/#295 fixed; 8 advisories accepted",
     "remote": "WCKDai/polykrom",
-    "notes": "0.21.0-rc.1 (prerelease) is published from release 0f8f505 with 45 assets and verified checksums. It includes the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 is fixed. Still open: #289 (hold), #293 (mesh size), #294 (closed-loop statics), #295 (sweep contacts, PR #300), #296 (tabs) and #297 (face pick), plus PolyCore #29\u2013#31. No stable release and no product benchmark."
+    "notes": "0.21.0-rc.1 (prerelease) is published from release 0f8f505 with 45 assets and verified checksums. It includes the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 is fixed. Since the RC, #289 (hold) and #295 (sweep body pairs) merged on main but are not in RC.1. Still open: #293 (mesh size), #294 (closed-loop statics), #296 (tabs) and #297 (face pick), plus PolyCore #29\u2013#31. No stable release and no product benchmark."
   },
   {
     "id": "platform",
