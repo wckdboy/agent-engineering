@@ -2,7 +2,7 @@
 
 > ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.
 
-Source: `5527fe3` · schema `d8ed0b84f2c9d867` · kit version `1.0.1`.
+Source: `72d88a7` · schema `fcfcb86bd723838f` · kit version `1.0.1`.
 
 Homepage: https://adamant.cc  
 Repository: https://github.com/wckdboy/agent-engineering
@@ -106,7 +106,7 @@ Source: `skills/release-verifier/SKILL.md`.
 ## Repositories
 - **engineering** — Portable kit source, branch `main`, status green. The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes.
 - **sovware** — Pilot repository, branch `main`, status green. Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds.
-- **polykrom** — Large Rust CAD workspace, branch `eng/portable-controls`, status blocked. The large-tree test. Fast profile is bounded to fmt, layers, lists, assets and the io contract tests. OSV reports 15 dependency advisories; the authoritative cargo xtask ci is not yet green.
+- **polykrom** — Large Rust CAD workspace, branch `eng/portable-controls`, status review. Large-tree pilot. Fast profile 22s; legacy design contract fixture passes; cargo xtask ci and every GitHub check pass. Four dependency advisories are patched; the remaining unmaintained/transitive ones are documented in the PR and need an owner decision or major upgrade.
 - **platform** — Infrastructure control plane, branch `eng/portable-controls`, status review. Read-only quality workflow added. The organization-level policy still does not require SHA-pinned actions; that is an owner decision outside the repository.
 - **your repository** — New installation, branch `feature branch`, status template. Install the kit, keep AGENTS.md authoritative, and start with the fast profile. Do not copy another repository's commands without checking its build files.
 

@@ -76,7 +76,7 @@ class SiteTests(unittest.TestCase):
                 self.assertTrue(step["skills"], f"{path['id']}: {step['title']} has no skill")
                 self.assertTrue(step["done"])
         statuses = {repo["status"] for repo in data["repos"]}
-        self.assertTrue({"green", "blocked", "review"}.issubset(statuses))
+        self.assertTrue({"green", "review", "template"}.issubset(statuses))
 
     def test_local_links_exist(self):
         text = (SITE / "index.html").read_text(encoding="utf-8")

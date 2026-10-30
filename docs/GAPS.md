@@ -75,10 +75,11 @@ not a proof of correctness or security.
 - **sovware** — two GitHub Actions runs passed (`40944146737`, `40946781919`); the full job installed
   scanners, ran the full gate and uploaded `.agents/evidence/`. Local warm fast/full: 0.8 s / 5–6 s.
 - **polykrom** — `eng detect` 1.8 s; fast profile 22 s after the io test binary was built; contract
-  fixture `legacy-solvecraft-v1.solidcraft` loads and is re-tagged on save. Gitleaks and Semgrep are
-  clean after narrow, documented false-positive suppressions. OSV reports **15 dependency advisories**
-  (cgmath, proc-macro-error, rustls-webpki, tokio, ttf-parser, webpki-root-certs, zip, zbus_names,
-  zvariant and transitive packages); the authoritative full `cargo xtask ci` was not run.
+  fixture `legacy-solvecraft-v1.solidcraft` loads and is re-tagged on save. `cargo xtask ci` passed
+  locally and every GitHub check passes on PR #281. Four advisories are patched (rustls-webpki,
+  webpki-root-certs, tokio, zip); **8 unique advisories remain** (block-buffer, cgmath,
+  proc-macro-error, ttf-parser, zbus_names and the zvariant family) and are documented in the PR.
+  Gitleaks/Semgrep/actionlint pass after narrow, reviewed suppressions.
 - **platform** — fast 0.5 s, full 3.2 s; all 9 action references are pinned; zizmor and actionlint
   report no findings. `audit-config.sh` still fails the organization-level "require SHA-pinned
   actions" check; that is outside the repository.
@@ -87,9 +88,9 @@ not a proof of correctness or security.
 
 ## Rollout priorities
 
-1. **Polykrom.** Triage the 15 OSV advisories (upgrade, patch or a dated owner risk acceptance);
-   run the authoritative `cargo xtask ci`; push `eng/portable-controls` as a PR. The fast gate and
-   contract fixture are already verified locally.
+1. **Polykrom.** PR [#281](https://github.com/WCKDai/polykrom/pull/281) is open and every check
+   passes. Merge it after review, then decide the remaining 8 unmaintained/transitive advisories
+   (coordinated major upgrade or a dated owner risk acceptance).
 2. **Platform.** Get the organization's "require SHA-pinned actions" policy enabled by the owner;
    push `eng/portable-controls` and confirm the new quality workflow. `audit-config.sh` should join
    the full profile when org access is available.

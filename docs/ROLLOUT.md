@@ -53,7 +53,9 @@ Installed with a bounded fast profile (`fmt`, layers, lists, assets, io tests) a
 but unrun full profile (`cargo xtask ci`). `eng detect` took 1.8 s and the fast gate 22 s once the io
 test binary was built. A legacy `solvecraft/1` fixture was added at
 `crates/io/tests/fixtures/legacy-solvecraft-v1.solidcraft` with a test that loads and re-tags it.
-Gitleaks/Semgrep pass after narrow suppressions; OSV reports 15 advisories and blocks the full gate.
+Gitleaks/Semgrep pass after narrow suppressions. Four dependency advisories were patched; eight
+unique unmaintained/transitive advisories remain documented in PR #281, which is open with every
+check passing.
 
 1. Install without hooks first; run `eng detect` and `eng impact` only (read-only).
 2. Configure fast commands from the existing `plan/` and CI; avoid a full `cargo test` in the fast

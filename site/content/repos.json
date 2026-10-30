@@ -26,11 +26,11 @@
     "name": "polykrom",
     "role": "Large Rust CAD workspace",
     "branch": "eng/portable-controls",
-    "status": "blocked",
+    "status": "review",
     "gate": "./.agents/bin/eng verify --profile fast",
-    "evidence": "Fast profile 22s; legacy design contract fixture passes; full gate blocked",
-    "remote": "local review branch",
-    "notes": "The large-tree test. Fast profile is bounded to fmt, layers, lists, assets and the io contract tests. OSV reports 15 dependency advisories; the authoritative cargo xtask ci is not yet green."
+    "evidence": "PR #281: all checks pass; 4 advisories fixed; 8 unique remain",
+    "remote": "WCKDai/polykrom#281",
+    "notes": "Large-tree pilot. Fast profile 22s; legacy design contract fixture passes; cargo xtask ci and every GitHub check pass. Four dependency advisories are patched; the remaining unmaintained/transitive ones are documented in the PR and need an owner decision or major upgrade."
   },
   {
     "id": "platform",

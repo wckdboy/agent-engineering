@@ -5,10 +5,10 @@
   "repository": "https://github.com/wckdboy/agent-engineering",
   "version": "1.0.1",
   "source": {
-    "commit": "5527fe3",
-    "committed_at": "2026-10-29T23:49:37+01:00",
+    "commit": "72d88a7",
+    "committed_at": "2026-10-30T01:41:14+01:00",
     "dirty": true,
-    "content_sha256": "d8ed0b84f2c9d867bb154ee04067a421796f214827edb7ddcfc0ca3b0a072378"
+    "content_sha256": "fcfcb86bd723838f892a4b05642be8a0d18349850edcc236371e01fe56783926"
   },
   "start": {
     "read_first": [
@@ -945,11 +945,11 @@
       "name": "polykrom",
       "role": "Large Rust CAD workspace",
       "branch": "eng/portable-controls",
-      "status": "blocked",
+      "status": "review",
       "gate": "./.agents/bin/eng verify --profile fast",
-      "evidence": "Fast profile 22s; legacy design contract fixture passes; full gate blocked",
-      "remote": "local review branch",
-      "notes": "The large-tree test. Fast profile is bounded to fmt, layers, lists, assets and the io contract tests. OSV reports 15 dependency advisories; the authoritative cargo xtask ci is not yet green."
+      "evidence": "PR #281: all checks pass; 4 advisories fixed; 8 unique remain",
+      "remote": "WCKDai/polykrom#281",
+      "notes": "Large-tree pilot. Fast profile 22s; legacy design contract fixture passes; cargo xtask ci and every GitHub check pass. Four dependency advisories are patched; the remaining unmaintained/transitive ones are documented in the PR and need an owner decision or major upgrade."
     },
     {
       "id": "platform",
