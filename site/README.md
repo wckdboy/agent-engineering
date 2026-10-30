@@ -1,7 +1,10 @@
-# ADAMANT portal
+# CREED — creed.sh
 
-ADAMANT is a static, dependency-free portal generated from the kit's actual skills, references and configs.
+CREED is a static, dependency-free portal generated from the kit's actual skills, references and configs.
 It is both a human handbook and an agent handoff.
+
+Canonical agent entrypoint: <https://creed.sh/creed.md>. The former ADAMANT domains redirect to
+Creed. The CLI, schemas, skill frontmatter and download paths are unchanged.
 
 ## Run locally
 
@@ -23,6 +26,8 @@ UI fetches `data/site.json`; the error message tells you to serve the directory.
 | `data/tools.json` | Capability catalog |
 | `agents.json` | Machine-readable entrypoint, start commands and compact catalog |
 | `llms.txt` | Compact text brief for an agent with no UI |
+| `creed.md` | Values, lifecycle, trust boundaries and raw skill URLs |
+| `skills/*/SKILL.md`, `references/*.md` | Byte-identical authoritative sources |
 | `docs/*.html` | Rendered operating manual, evidence reference and gap register |
 | `downloads/eng-kit.zip` | Installable kit with a SHA-256 manifest |
 | `downloads/manifest.json` | Zip digest, size and file list |
@@ -65,12 +70,16 @@ download manifest.
 ## Hosting — Cloudflare Workers
 
 The portal is deployed with Wrangler as a Workers static-assets project. `wrangler.jsonc` points at
-`site/` and attaches both custom domains:
+`site/` and attaches the canonical and legacy custom domains. `worker.mjs` runs before static
+assets, redirecting only exact legacy hosts and `www.creed.sh` to `https://creed.sh`, with HTTP 308:
 
 ```jsonc
 "name": "adamant",
-"assets": { "directory": "site" },
+"main": "worker.mjs",
+"assets": { "directory": "site", "binding": "ASSETS", "run_worker_first": true },
 "routes": [
+  { "pattern": "creed.sh", "custom_domain": true },
+  { "pattern": "www.creed.sh", "custom_domain": true },
   { "pattern": "adamant.cc", "custom_domain": true },
   { "pattern": "www.adamant.cc", "custom_domain": true }
 ]
@@ -79,15 +88,19 @@ The portal is deployed with Wrangler as a Workers static-assets project. `wrangl
 Deploy:
 
 ```sh
+python3 site/build.py
+./tests/run.sh
+npx wrangler deploy --dry-run
 npx wrangler deploy
 ```
 
-Wrangler/Cloudflare created the proxied apex and `www` records for `adamant.cc`. Verify with a public
-resolver, not only the local cache:
+Keep the worker name `adamant` to preserve its deployment identity. Wrangler attaches the custom
+domains; verify DNS, TLS, agent endpoints and redirects live, not only against a local cache:
 
 ```sh
-dig +short @1.1.1.1 adamant.cc
-curl -sSI --resolve adamant.cc:443:$(dig +short @1.1.1.1 adamant.cc | head -1) https://adamant.cc/ | head
+dig +short @1.1.1.1 creed.sh
+curl -sSI https://creed.sh/creed.md
+curl -sSI 'https://adamant.cc/skills/repo-intelligence/SKILL.md?from=agent'
 ```
 
 `site/CNAME` is intentionally absent: GitHub Pages is not the host. If a local resolver still returns
@@ -96,14 +109,19 @@ Cloudflare DoH endpoint are authoritative for propagation checks.
 
 ## Raw agent endpoints
 
-The raw files work as soon as the repository is pushed:
+These are static files; no client JavaScript or model provider is required:
 
 ```text
-https://raw.githubusercontent.com/wckdboy/agent-engineering/main/site/agents.json
-https://raw.githubusercontent.com/wckdboy/agent-engineering/main/site/llms.txt
-https://raw.githubusercontent.com/wckdboy/agent-engineering/main/site/downloads/eng-kit.zip
+https://creed.sh/creed.md
+https://creed.sh/agents.json
+https://creed.sh/llms.txt
+https://creed.sh/skills/repo-intelligence/SKILL.md
+https://creed.sh/data/tools.json
+https://creed.sh/downloads/eng-kit.zip
 ```
 
-`creed.sh` is an alternative domain with the same Cloudflare nameservers and no DNS records. The
-portal is branded ADAMANT, so `adamant.cc` is the primary; switching to `creed.sh` would be one Pages
-`cname` change plus DNS records, but it would split the name from the domain.
+Rollback: redeploy the previous Wrangler version; keep both old-domain routes attached. The agent
+entrypoint and raw routes are additive; old JSON schemas and package paths remain valid.
+
+The visual authority is WCKD's `autobot-www/brand/kit.json` and `brand/web.css`. `assets/brand.css`
+adapts the handbook layout without changing its search, filters, dialogs or raw endpoints.

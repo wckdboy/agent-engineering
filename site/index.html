@@ -1,24 +1,29 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ADAMANT — build at the level the repository requires</title>
-  <meta name="description" content="ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.">
-  <meta name="theme-color" content="#080b11">
+  <title>CREED — evidence over assertion</title>
+  <meta name="description" content="WCKD's engineering guide for agents. Values, task skills, verification tools and evidence. Build at the level the repository requires.">
+  <link rel="canonical" href="https://creed.sh/">
+  <meta property="og:title" content="CREED — evidence over assertion">
+  <meta property="og:url" content="https://creed.sh/">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff">
   <link rel="stylesheet" href="./assets/styles.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080b11'/%3E%3Cpath d='M18 44V20h9l5 9 5-9h9v24h-7V31l-7 12-7-12v13z' fill='%235eead4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./assets/brand.css">
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="ambient" aria-hidden="true"></div>
 
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="ADAMANT home">
+    <a class="brand" href="#top" aria-label="CREED home">
       <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 40 40" role="img"><path d="M20 6 L34 34 H26 L20 19 L14 34 H6 Z"/></svg>
+        <img src="./assets/favicon.svg" width="20" height="20" alt="">
       </span>
-      <span class="brand-text">ADAMANT <em>Agent Engineering</em></span>
+      <span class="brand-text">creed <em>/ creed.sh</em></span>
     </a>
     <nav class="topnav" aria-label="Primary">
       <a href="#playbook">Playbook</a>
@@ -68,11 +73,11 @@
     <main id="main">
       <section class="hero" id="top">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="eyebrow-dot"></span> ADAMANT · portable · agent-ready · evidence-first</p>
+          <p class="eyebrow"><span class="eyebrow-dot"></span> wckd / engineering for agents</p>
           <h1>Build at the level<br>the repository <em>requires.</em></h1>
-          <p class="hero-lead">A working control system for coding agents: ten task skills, one dependency-free verification CLI, hash-chained evidence, isolated worktrees and real security gates.</p>
+          <p class="hero-lead">Evidence over assertion. Small, reversible changes. Contracts kept. The values, skills and tools to make an agent a better engineer — with a record of what actually ran.</p>
           <div class="hero-actions">
-            <a class="button primary" href="#playbook">Read the playbook <span aria-hidden="true">→</span></a>
+            <a class="button primary" href="./creed.md">Give an agent the creed <span aria-hidden="true">→</span></a>
             <a class="button ghost" href="#skills">Explore the skills</a>
             <a class="button text" id="download-top" href="./downloads/eng-kit.zip">Download the kit <span aria-hidden="true">↓</span></a>
           </div>
@@ -246,9 +251,10 @@
             <p class="section-kicker">08 — For agents</p>
             <h2>Give the next agent the shortest correct path.</h2>
           </div>
-          <p class="section-intro">The portal is also a machine-readable handoff. Point an agent at <code>agents.json</code> or <code>llms.txt</code>; download the same kit a human installs.</p>
+          <p class="section-intro">Start with <a href="./creed.md">creed.md</a>: the values, lifecycle, trust boundaries and raw skill links in one readable handoff. Repository policy still comes first.</p>
         </div>
         <div class="machine-grid">
+          <a class="machine-card" href="./creed.md"><span class="machine-icon">→</span><div><h3>creed.md</h3><p>The engineering creed. Give this URL to an agent before it starts work.</p></div></a>
           <a class="machine-card" href="./agents.json">
             <span class="machine-icon">{ }</span>
             <div><h3>agents.json</h3><p>Schema, start commands, skills, paths, tools, guardrails, repository states and limits.</p></div>
@@ -287,7 +293,7 @@ Never report a skipped or blocked check as passing.</code></pre>
 
       <footer class="footer">
         <div>
-          <span class="brand-text">ADAMANT <em>Agent Engineering</em></span>
+          <span class="brand-text">creed <em>/ engineering for agents</em></span>
           <p>Portable controls for repositories worked on by agents. Built from the same source the installer ships.</p>
         </div>
         <div class="footer-meta">
@@ -298,6 +304,8 @@ Never report a skipped or blocked check as passing.</code></pre>
           <a href="./agents.json">agents.json</a>
           <span>·</span>
           <a href="https://github.com/wckdboy/agent-engineering">Source</a>
+          <span>·</span>
+          <a href="https://wckd.ai">WCKD</a>
           <span>·</span>
           <a href="#top">Back to top ↑</a>
         </div>
