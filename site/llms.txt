@@ -2,7 +2,7 @@
 
 > ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.
 
-Source: `1cea543` · schema `87daa04e089a1495` · kit version `1.1.1`.
+Source: `2d37f73` · schema `0b78712af99d74bd` · kit version `1.1.1`.
 
 Homepage: https://adamant.cc  
 Repository: https://github.com/wckdboy/agent-engineering
@@ -106,8 +106,8 @@ Source: `skills/release-verifier/SKILL.md`.
 ## Repositories
 - **engineering** — Portable kit source, branch `main`, status green. The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes.
 - **sovware** — Pilot repository, branch `main`, status green. Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds.
-- **polycore** — Geometric kernel, branch `eng/adamant-controls`, status review. Phase 0 kernel. Controls, AGENTS.md, gitleaks/Semgrep/OSV/actionlint and a routed-Truck performance baseline are on PR #28. The full cargo xtask ci phase gate runs there; no release is proposed before the phase gate and a fresh benchmark.
-- **polykrom** — Large Rust CAD workspace, branch `main + feature PRs`, status review. Large-tree pilot and release candidate. Controls and four dependency patches are merged. The MCP quality gate is in #282; the security workflow and time-boxed advisory decisions are in #287. Full gate and every prior check pass; no release is cut until both merge and a real product benchmark exists.
+- **polycore** — Geometric kernel, branch `main`, status review. Phase 0 kernel. AGENTS.md, ADAMANT controls, gitleaks/Semgrep/OSV/actionlint and the routed-Truck scorecard baseline are on main. No release: Phase 0 and a fresh benchmark are not complete.
+- **polykrom** — Large Rust CAD workspace, branch `main`, status green. Controls, MCP quality gate, contract fixture and security workflow are on main. Four advisories patched; eight accepted to 2027-01-31. No release: there is no release branch and no real Polykrom product benchmark yet. New robot-export issues #288/#289 are release blockers for that capability.
 - **platform** — Infrastructure control plane, branch `eng/portable-controls`, status review. Read-only quality workflow added. The organization-level policy still does not require SHA-pinned actions; that is an owner decision outside the repository.
 - **your repository** — New installation, branch `feature branch`, status template. Install the kit, keep AGENTS.md authoritative, and start with the fast profile. Do not copy another repository's commands without checking its build files.
 
