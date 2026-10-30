@@ -1,0 +1,3 @@
+# Deliberately vulnerable control fixtures. They are exercised by tests, never installed
+# into a target repository; the rules themselves are validated against them.
+evals/
