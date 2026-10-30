@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import re
 import shutil
 import subprocess
+import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 from pathlib import Path
 
@@ -93,6 +96,32 @@ class SiteTests(unittest.TestCase):
             self.assertEqual((SITE / skill["source"]).read_bytes(), (KIT / skill["source"]).read_bytes())
         for reference in (KIT / "references").glob("*.md"):
             self.assertEqual((SITE / "references" / reference.name).read_bytes(), reference.read_bytes())
+
+    def test_rebuild_removes_deleted_and_renamed_raw_sources(self):
+        spec = importlib.util.spec_from_file_location("portal_build", SITE / "build.py")
+        portal = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(portal)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / "site"
+            (root / "references").mkdir()
+            (root / "references/current.md").write_text("current policy\n")
+            (output / "references").mkdir(parents=True)
+            (output / "references/deleted.md").write_text("obsolete policy\n")
+            (output / "skills/renamed").mkdir(parents=True)
+            (output / "skills/renamed/SKILL.md").write_text("obsolete skill\n")
+            skill = {"id": "current", "source_path": "skills/current/SKILL.md",
+                     "description": "current skill", "raw_markdown": "current skill\n"}
+            with patch.object(portal, "ROOT", root), patch.object(portal, "SITE", output):
+                portal.build_creed([], [], [], [skill], {})
+                self.assertFalse((output / "references/deleted.md").exists())
+                self.assertFalse((output / "skills/renamed/SKILL.md").exists())
+                self.assertEqual((output / "references/current.md").read_text(), "current policy\n")
+                self.assertEqual((output / skill["source_path"]).read_text(), skill["raw_markdown"])
+                (root / "references/current.md").unlink()
+                portal.build_creed([], [], [], [], {})
+                self.assertFalse((output / "references/current.md").exists())
+                self.assertFalse((output / skill["source_path"]).exists())
 
     def test_legacy_redirects_preserve_path_and_query(self):
         node = shutil.which("node")

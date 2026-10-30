@@ -45,7 +45,9 @@ a text search found no reference.
    Read at least one non-test consumer and one test consumer.
 4. Check the contract surfaces: serialized fields, CLI output, exit codes, HTTP routes, database
    columns, file formats, ABI, feature flags and defaults.
-5. Check generated artifacts and vendored copies; regenerate them with the documented command.
+5. Check generated artifacts and vendored copies without changing the working tree. If needed,
+   compare output in an isolated temporary copy using the documented command; defer working-tree
+   regeneration to a separately authorized implementation step.
 6. Select verification: narrow tests for each affected symbol, integration tests for consumers,
    compatibility fixtures for contracts, benchmark for hot paths.
 7. State what remains unknown (dynamic callers, external clients, production data).

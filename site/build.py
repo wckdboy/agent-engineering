@@ -282,13 +282,23 @@ def build_creed(principles, guardrails, phases, skills, commands):
               "Report what changed, exact commands and results, pre-existing failures, skipped or blocked",
               "checks, residual risks and rollback. A green gate covers only the checks that ran.", ""]
     (SITE / "creed.md").write_text("\n".join(lines), encoding="utf-8")
+    # Prune only generated raw guidance, not arbitrary files in the output tree.
+    current_skills = {SITE / skill["source_path"] for skill in skills}
+    for previous in (SITE / "skills").glob("*/SKILL.md"):
+        if previous not in current_skills:
+            previous.unlink()
     for skill in skills:
         target = SITE / skill["source_path"]
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(skill["raw_markdown"], encoding="utf-8")
     references = SITE / "references"
     references.mkdir(exist_ok=True)
-    for source in (ROOT / "references").glob("*.md"):
+    sources = list((ROOT / "references").glob("*.md"))
+    current_references = {source.name for source in sources}
+    for previous in references.glob("*.md"):
+        if previous.name not in current_references:
+            previous.unlink()
+    for source in sources:
         shutil.copy2(source, references / source.name)
 
 

@@ -6,7 +6,7 @@ This is the shared lifecycle for every nontrivial task. Repository policy (`AGEN
 ## A. Understand
 
 - Restate the requested behavior and acceptance criteria. Separate must-haves from preferences.
-- Locate the symbols, modules, tests and contracts involved. Prefer `eng detect`, `eng impact`,
+- Locate the symbols, modules, tests and contracts involved. Prefer `./.agents/bin/eng detect`, `./.agents/bin/eng impact`,
   targeted `rg`, and compiler/LSP results over reading the whole repository.
 - Identify behavior that must be preserved, including error text, exit codes, file formats,
   ordering, defaults and performance characteristics.
@@ -26,7 +26,7 @@ This is the shared lifecycle for every nontrivial task. Repository policy (`AGEN
 
 ## C. Baseline
 
-- Run the relevant existing checks before editing. `eng verify --profile fast` is the default.
+- Run the relevant existing checks before editing. `./.agents/bin/eng verify --profile fast` is the default.
 - Record pre-existing failures separately. Never attribute an existing failure to the new change.
 - Add a characterization or regression test when behavior is not already covered.
 - For performance-sensitive work, record a reproducible baseline before optimizing.
@@ -42,7 +42,7 @@ This is the shared lifecycle for every nontrivial task. Repository policy (`AGEN
 
 ## E. Verify
 
-- `eng verify --profile fast` for every change; `--profile full` for shared interfaces, security
+- `./.agents/bin/eng verify --profile fast` for every change; `--profile full` for shared interfaces, security
   boundaries, persistence, build/CI, releases, or when in doubt.
 - Run the narrowest relevant tests first, then the broader suite. A green unrelated suite is not
   evidence for a targeted change.
@@ -54,5 +54,5 @@ This is the shared lifecycle for every nontrivial task. Repository policy (`AGEN
 
 Include: change summary, requirements satisfied, commands actually run with results, tests that
 failed or were skipped, security considerations, performance effect, unverified behavior, and
-residual risk. Link the evidence record (`eng evidence list`). A model's self-assessment is not a
+residual risk. Link the evidence record (`./.agents/bin/eng evidence list`). A model's self-assessment is not a
 verification result.

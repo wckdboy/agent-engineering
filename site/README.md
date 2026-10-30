@@ -49,6 +49,18 @@ Do not edit `data/`, `agents.json`, `llms.txt`, `docs/` or `downloads/` by hand.
 rebuild. A test (`tests/test_site.py`) checks determinism, local links, the machine handoff and the
 download manifest.
 
+Browser regression checks use an existing Chrome and `playwright-core` installation (no runtime
+dependency is added to the site):
+
+```sh
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright-core/index.mjs node tests/test_browser.mjs
+```
+
+Set `CHROME_BIN` for another Chrome/Chromium executable and `QA_SHOTS` for screenshots. The check
+covers both themes at seven widths, including the tablet navigation boundary, readable skip links
+and code blocks, inline-link cues, documentation overflow and skill-dialog dismissal. It is a
+separate browser gate, not a claim that the Python suite performs browser testing.
+
 ## Adding content
 
 - Add a skill by creating `skills/<name>/SKILL.md`; the portal picks it up. Update `SKILL_META` in
