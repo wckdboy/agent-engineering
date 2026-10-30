@@ -39,9 +39,9 @@
     "branch": "main",
     "status": "green",
     "gate": "./.agents/bin/eng verify --profile fast",
-    "evidence": "#281, #282 and #287 merged; full + security gates pass; 8 advisories accepted",
+    "evidence": "#281/#282/#287/#298 merged; full + security gates pass; #288 fixed; 8 advisories accepted",
     "remote": "WCKDai/polykrom",
-    "notes": "Controls, MCP quality gate, contract fixture and security workflow are on main. Four advisories patched; eight accepted to 2027-01-31. No release: there is no release branch and no real Polykrom product benchmark yet. New robot-export issues #288/#289 are release blockers for that capability."
+    "notes": "Controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure are on main. Four advisories patched; eight accepted to 2027-01-31. No release: no product benchmark, and #289 (hold a loop input), #294 (closed-loop statics), #295 (sweep contact), #296 (tab identity) and #297 (ambiguous face pick) remain open."
   },
   {
     "id": "platform",
