@@ -2,7 +2,7 @@
 
 > ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.
 
-Source: `85d8ea4` · schema `0fbefa4eacddbc40` · kit version `1.1.1`.
+Source: `9106ae9` · schema `0668d5ccef52ecf6` · kit version `1.1.1`.
 
 Homepage: https://adamant.cc  
 Repository: https://github.com/wckdboy/agent-engineering
@@ -107,7 +107,7 @@ Source: `skills/release-verifier/SKILL.md`.
 - **engineering** — Portable kit source, branch `main`, status green. The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes.
 - **sovware** — Pilot repository, branch `main`, status green. Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds.
 - **polycore** — Geometric kernel, branch `main`, status review. Phase 0 kernel. AGENTS.md, ADAMANT controls, gitleaks/Semgrep/OSV/actionlint and the routed-Truck scorecard baseline are on main. No release: Phase 0 and a fresh benchmark are not complete.
-- **polykrom** — Large Rust CAD workspace, branch `main`, status green. Controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure are on main. Four advisories patched; eight accepted to 2027-01-31. No release: no product benchmark, and #289 (hold a loop input), #294 (closed-loop statics), #295 (sweep contact), #296 (tab identity) and #297 (ambiguous face pick) remain open.
+- **polykrom** — Large Rust CAD workspace, branch `main`, status green. 0.21.0-rc.1 (prerelease) is published from release 0f8f505 with 45 assets and verified checksums. It includes the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 is fixed. Still open: #289 (hold), #293 (mesh size), #294 (closed-loop statics), #295 (sweep contacts, PR #300), #296 (tabs) and #297 (face pick), plus PolyCore #29–#31. No stable release and no product benchmark.
 - **platform** — Infrastructure control plane, branch `eng/portable-controls`, status review. Read-only quality workflow added. The organization-level policy still does not require SHA-pinned actions; that is an owner decision outside the repository.
 - **your repository** — New installation, branch `feature branch`, status template. Install the kit, keep AGENTS.md authoritative, and start with the fast profile. Do not copy another repository's commands without checking its build files.
 

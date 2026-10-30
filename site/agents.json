@@ -5,10 +5,10 @@
   "repository": "https://github.com/wckdboy/agent-engineering",
   "version": "1.1.1",
   "source": {
-    "commit": "85d8ea4",
-    "committed_at": "2026-10-30T03:30:02+01:00",
+    "commit": "9106ae9",
+    "committed_at": "2026-10-30T12:45:33+01:00",
     "dirty": true,
-    "content_sha256": "0fbefa4eacddbc408a3935a4f3a5f16032ed333dd6a7a6cf0d860793cadc9b34"
+    "content_sha256": "0668d5ccef52ecf625e6d725f8729e805cbb3a2cfb1653e141e85288274c1041"
   },
   "start": {
     "read_first": [
@@ -958,9 +958,9 @@
       "branch": "main",
       "status": "green",
       "gate": "./.agents/bin/eng verify --profile fast",
-      "evidence": "#281/#282/#287/#298 merged; full + security gates pass; #288 fixed; 8 advisories accepted",
+      "evidence": "#281/#282/#287/#298 merged; 0.21.0-rc.1 published; full + security gates pass; #288 fixed; 8 advisories accepted",
       "remote": "WCKDai/polykrom",
-      "notes": "Controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure are on main. Four advisories patched; eight accepted to 2027-01-31. No release: no product benchmark, and #289 (hold a loop input), #294 (closed-loop statics), #295 (sweep contact), #296 (tab identity) and #297 (ambiguous face pick) remain open."
+      "notes": "0.21.0-rc.1 (prerelease) is published from release 0f8f505 with 45 assets and verified checksums. It includes the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 is fixed. Still open: #289 (hold), #293 (mesh size), #294 (closed-loop statics), #295 (sweep contacts, PR #300), #296 (tabs) and #297 (face pick), plus PolyCore #29–#31. No stable release and no product benchmark."
     },
     {
       "id": "platform",
