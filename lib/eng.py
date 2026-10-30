@@ -24,7 +24,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 CONFIG_SCHEMA = "eng-config/v1"
 DETECT_SCHEMA = "eng-detect/v1"
 IMPACT_SCHEMA = "eng-impact/v1"
@@ -238,12 +238,15 @@ def lockfiles(root):
     return sorted(dict.fromkeys(found))
 
 
-def osv_scan_args(exe, root, outfile):
-    """First pass: the recursive source scan, unchanged, for full input coverage.
+def osv_scan_args(exe, root, outfile, lockfile=None):
+    """First pass: the recursive source scan, or one explicitly named workspace lockfile.
 
-    It discovers every format osv supports — lockfiles outside ``LOCKFILE_NAMES``,
-    SBOMs, git directories — and it is what the gate has always run.
+    A repository may set ``security.osv_lockfile`` when nested vendor lockfiles are not part
+    of the built graph; the workspace lockfile is then the only dependency input.
     """
+    if lockfile:
+        return [exe, "scan", "source", "--lockfile", str(Path(root) / lockfile), "--format", "json",
+                "--output-file", str(outfile)]
     return [exe, "scan", "source", "--recursive", "--format", "json",
             "--output-file", str(outfile), str(root)]
 
@@ -1025,7 +1028,7 @@ def run_scanner(root, cfg, name, outdir):
         return result
     if name == "osv-scanner":
         c = cfg.get("security", {})
-        args = osv_scan_args(exe, root, outfile)
+        args = osv_scan_args(exe, root, outfile, c.get("osv_lockfile"))
         res = sh(args, cwd=root, timeout=c.get("timeout", 900), env=env)
         elapsed = res.dur
         if "No package sources found" in (res.out + res.err):

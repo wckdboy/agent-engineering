@@ -4,12 +4,12 @@
   "homepage": "https://adamant.cc",
   "repository": "https://github.com/wckdboy/agent-engineering",
   "tagline": "The agent engineering portal: controls, skills and evidence to build at the level the repository requires.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "source": {
-    "commit": "1f756d2",
-    "committed_at": "2026-10-30T02:28:02+01:00",
+    "commit": "1cea543",
+    "committed_at": "2026-10-30T02:32:21+01:00",
     "dirty": true,
-    "content_sha256": "21d3ef0948b22a97f50bf7682fdb8033f1c88db7e2e02807af94ce86bab4d607"
+    "content_sha256": "87daa04e089a14954cba8c8e75472903e83e92197eaa8e20b67c8afa3393e091"
   },
   "commands": {
     "install": "./install.sh --target <repo> --hooks",
@@ -1710,7 +1710,7 @@
       "branch": "main",
       "status": "green",
       "gate": "make check",
-      "evidence": "GitHub Actions kit-ci passing; Pages deployed; 42 tests",
+      "evidence": "v1.1.1 released; CI passing; ADAMANT live",
       "remote": "wckdboy/agent-engineering",
       "notes": "The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes."
     },
@@ -1726,15 +1726,26 @@
       "notes": "Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds."
     },
     {
+      "id": "polycore",
+      "name": "polycore",
+      "role": "Geometric kernel",
+      "branch": "eng/adamant-controls",
+      "status": "review",
+      "gate": "./.agents/bin/eng verify --profile fast",
+      "evidence": "PR #28 open; security gate passes; scorecard baseline recorded",
+      "remote": "WCKDai/polycore#28",
+      "notes": "Phase 0 kernel. Controls, AGENTS.md, gitleaks/Semgrep/OSV/actionlint and a routed-Truck performance baseline are on PR #28. The full cargo xtask ci phase gate runs there; no release is proposed before the phase gate and a fresh benchmark."
+    },
+    {
       "id": "polykrom",
       "name": "polykrom",
       "role": "Large Rust CAD workspace",
-      "branch": "eng/portable-controls",
+      "branch": "main + feature PRs",
       "status": "review",
       "gate": "./.agents/bin/eng verify --profile fast",
-      "evidence": "PR #281: all checks pass; 4 advisories fixed; 8 unique remain",
-      "remote": "WCKDai/polykrom#281",
-      "notes": "Large-tree pilot. Fast profile 22s; legacy design contract fixture passes; cargo xtask ci and every GitHub check pass. Four dependency advisories are patched; the remaining unmaintained/transitive ones are documented in the PR and need an owner decision or major upgrade."
+      "evidence": "#281 merged; #282 quality gate and #287 security gate open; 8 advisories accepted",
+      "remote": "WCKDai/polykrom#282",
+      "notes": "Large-tree pilot and release candidate. Controls and four dependency patches are merged. The MCP quality gate is in #282; the security workflow and time-boxed advisory decisions are in #287. Full gate and every prior check pass; no release is cut until both merge and a real product benchmark exists."
     },
     {
       "id": "platform",
@@ -1780,8 +1791,8 @@
   },
   "download": {
     "file": "eng-kit.zip",
-    "sha256": "599fbdf8554efbccb2eb266f8876af1a7232354dadfced57731d61884a2d8046",
-    "size": 60501,
+    "sha256": "c2cb7234ce159edfd7d39327904d1e3a46574713fe75faa21f89cf539c4caedc",
+    "size": 60534,
     "entries": 29,
     "files": [
       "AGENTS.md",

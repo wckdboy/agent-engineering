@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1 — 2026-10-30
+
+- `security.osv_lockfile` lets a repository with historical nested vendor lockfiles scan only
+  the workspace lockfile that is actually built.
+- Record the Polykrom #281 merge, the open #282/#287 quality and security PRs, and PolyCore PR
+  #28 on the ADAMANT repository status.
+- No product behavior change; site and release artifact stay in sync.
+
+
 ## 1.1.0 — 2026-10-30
 
 - ADAMANT portal generated from the kit, with `agents.json`, `llms.txt`, a skill explorer,
