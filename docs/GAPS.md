@@ -11,8 +11,7 @@ not a proof of correctness or security.
 | Pilot baseline `./scripts/check.sh` | pass, 3.18 s |
 | Pilot fast profile | pass, 3.24 s (fmt, clippy, test) |
 | Pilot full profile | pass, 5–7 s (check, gitleaks, Semgrep, OSV, actionlint) |
-| Kit unit/integration tests | 33 tests, 14.6 s, all pass |
-| ADAMANT portal tests | 9 tests, 0.4 s, all pass |
+| Kit + portal tests | 48 tests, 13.1 s, all pass |
 | Control evaluation | 9/9 evaluated checks pass (known-bad fails; fixed passes; planted secret/SAST found; clean passes) |
 | Agent harness, deterministic stub | 2/2 tasks pass, 0.93 s |
 | Agent harness, no-op agent | 0/2 tasks pass (scoring rejects a non-change) |
@@ -39,9 +38,9 @@ not a proof of correctness or security.
 6. **Artifact security.** `release-check` records supplied artifact, SBOM, signature and provenance
    hashes, but it does not generate an SBOM, verify a signature or produce an attestation. No
    container scan; the pilot produces no release artifact. Cosign/Syft/Trivy remain deferred.
-7. **Performance baselines.** The kit records command durations but no benchmark suite or historical
-   performance trend. `performance-engineer` defines the method; it has not been exercised on a hot
-   path.
+7. **Performance baselines.** `eng perf-check` compares measured JSON metrics with an accepted
+   baseline and `release-check` refuses a regression; no benchmark harness is bundled, so each
+   repository must produce the metrics. The gate has not yet been exercised on a real release.
 8. **Property/fuzz/mutation testing.** No harness or corpus is included. These are repository- and
    language-specific and should be added to full profiles where they pay off.
 9. **Platform coverage.** macOS and Linux only. The evidence index uses `fcntl`; Windows is not

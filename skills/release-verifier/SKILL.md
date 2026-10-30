@@ -41,7 +41,9 @@ edit the changelog to hide a breaking change. Never commit signing keys or token
 2. Run `./.agents/bin/eng verify --profile full --ci`. Confirm the evidence record is for the
    candidate revision, not an earlier one.
 3. Run `./.agents/bin/eng release-check --version <v> --artifact <path> --notes <file> --rollback <file>`.
-   It refuses a dirty tree, missing version/notes/rollback, or evidence for another HEAD.
+   It refuses a dirty tree, missing version/notes/rollback, evidence for another HEAD, or a
+   performance regression against the accepted baseline. Pass `--performance-baseline` and
+   `--performance-current`; `perf-check` compares higher/lower-is-better metrics.
 4. Verify the version, changelog, compatibility notes and migration steps. Check that generated
    artifacts match their source.
 5. Check security: required scanners ran, findings are resolved or explicitly accepted by the owner,

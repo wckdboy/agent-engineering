@@ -1508,6 +1508,19 @@ def release_check_data(root, args):
             checks.append({"name": f"artifact {path}", "ok": False, "detail": "missing"})
     check("at least one artifact", bool(artifacts), f"{len(artifacts)} artifact(s)")
 
+    performance = None
+    if args.performance_baseline or args.performance_current:
+        if not (args.performance_baseline and args.performance_current):
+            checks.append({"name": "performance comparison", "ok": False,
+                           "detail": "pass both --performance-baseline and --performance-current"})
+        else:
+            performance = perf_compare(args.performance_baseline, args.performance_current, args.max_regression)
+            checks.append({"name": "performance comparison", "ok": performance["verdict"] == "pass",
+                           "detail": f"{len(performance['metrics'])} metric(s), max regression {args.max_regression}%"})
+    elif args.require_performance:
+        checks.append({"name": "performance comparison", "ok": False,
+                       "detail": "required but no baseline/current supplied"})
+
     for label, value in (("sbom", args.sbom), ("signature", args.signature), ("provenance", args.provenance)):
         if value:
             p = Path(value)
@@ -1523,10 +1536,81 @@ def release_check_data(root, args):
         "git": {"head": head_sha, "dirty": bool(status.out.strip())},
         "evidence": {"id": evidence.get("id"), "sha256": evidence.get("sha256")} if evidence else None,
         "artifacts": artifacts,
+        "performance": performance,
         "checks": checks,
         "verdict": verdict,
         "note": "This prepares release evidence. It does not publish, sign or deploy; human approval is still required.",
     }
+
+
+def load_perf(path):
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"eng perf: cannot read {path}: {exc}")
+    metrics = data.get("metrics")
+    if data.get("schema") not in ("eng-perf/v1", None) or not isinstance(metrics, dict):
+        raise SystemExit(f"eng perf: {path} must contain schema eng-perf/v1 and a metrics object")
+    return data
+
+
+def perf_compare(baseline_path, current_path, max_regression):
+    baseline = load_perf(baseline_path)
+    current = load_perf(current_path)
+    tolerance = max(0.0, float(max_regression)) / 100.0
+    results = []
+    failures = []
+    for name, base in baseline["metrics"].items():
+        if not isinstance(base, dict) or "value" not in base:
+            failures.append(f"{name}: baseline metric has no value")
+            continue
+        cur = current["metrics"].get(name)
+        if not isinstance(cur, dict) or "value" not in cur:
+            failures.append(f"{name}: missing from current run")
+            continue
+        try:
+            b = float(base["value"])
+            c = float(cur["value"])
+        except (TypeError, ValueError):
+            failures.append(f"{name}: non-numeric value")
+            continue
+        direction = base.get("direction", "higher")
+        if direction not in ("higher", "lower"):
+            failures.append(f"{name}: direction must be higher or lower")
+            continue
+        if direction == "higher":
+            limit = b * (1.0 - tolerance)
+            ok = c >= limit
+        else:
+            limit = b * (1.0 + tolerance)
+            ok = c <= limit
+        delta = (c - b) / abs(b) * 100.0 if b != 0 else (0.0 if c == 0 else float("inf"))
+        results.append({"name": name, "baseline": b, "current": c, "direction": direction,
+                        "limit": limit, "delta_pct": round(delta, 3), "ok": ok,
+                        "unit": base.get("unit")})
+        if not ok:
+            failures.append(f"{name}: {c:g} vs baseline {b:g} (limit {limit:g}, {delta:+.1f}%)")
+    return {
+        "schema": "eng-perf-compare/v1",
+        "baseline": str(baseline_path),
+        "current": str(current_path),
+        "max_regression_pct": float(max_regression),
+        "metrics": results,
+        "failures": failures,
+        "verdict": "pass" if not failures else "fail",
+    }
+
+
+def cmd_perf_check(args):
+    data = perf_compare(args.baseline, args.current, args.max_regression)
+    if args.json:
+        print(json.dumps(data, indent=2, sort_keys=True))
+    else:
+        for m in data["metrics"]:
+            mark = "ok" if m["ok"] else "FAIL"
+            print(f"  {mark:<4} {m['name']:<28} {m['current']:>12g}  baseline {m['baseline']:>12g}  {m['delta_pct']:+.1f}%")
+        print(f"eng perf: {data['verdict'].upper()}")
+    return 0 if data["verdict"] == "pass" else 1
 
 
 def cmd_release_check(args):
@@ -1911,7 +1995,18 @@ def main(argv=None):
     p.add_argument("--signature", default=None)
     p.add_argument("--provenance", default=None)
     p.add_argument("--require-sbom", action="store_true")
+    p.add_argument("--performance-baseline", default=None)
+    p.add_argument("--performance-current", default=None)
+    p.add_argument("--max-regression", type=float, default=5.0,
+                   help="allowed regression percentage (default 5)")
+    p.add_argument("--require-performance", action="store_true")
     p.set_defaults(func=cmd_release_check)
+
+    p = sub.add_parser("perf-check", help="compare measured metrics with an accepted baseline")
+    p.add_argument("--baseline", required=True)
+    p.add_argument("--current", required=True)
+    p.add_argument("--max-regression", type=float, default=5.0)
+    p.set_defaults(func=cmd_perf_check)
 
     p = sub.add_parser("guard", help="fast pre-commit guard")
     p.add_argument("mode", nargs="?", choices=["staged", "all"], default="staged")

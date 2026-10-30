@@ -287,6 +287,20 @@ class ReleaseTests(EngTestCase):
         self.assertIn("release evidence", res.stdout)
         self.assertEqual(eng(self.tmp, "evidence", "verify").returncode, 0)
 
+    def test_release_refuses_a_performance_regression(self):
+        self.prepare_release()
+        self.assertEqual(eng(self.tmp, "verify", "--profile", "full").returncode, 0)
+        evidence = self.tmp / ".agents" / "evidence"
+        base = evidence / "base.json"
+        cur = evidence / "current.json"
+        base.write_text(json.dumps({"schema": "eng-perf/v1", "metrics": {"score": {"value": 100, "direction": "higher"}}}))
+        cur.write_text(json.dumps({"schema": "eng-perf/v1", "metrics": {"score": {"value": 60, "direction": "higher"}}}))
+        res = eng(self.tmp, "release-check", "--version", "1.2.3", "--artifact", "dist/app.txt",
+                  "--notes", "notes.md", "--rollback", "rollback.md",
+                  "--performance-baseline", str(base), "--performance-current", str(cur))
+        self.assertEqual(res.returncode, 1, res.stdout)
+        self.assertIn("performance comparison", res.stdout)
+
     def test_release_refuses_dirty_tree_and_wrong_version(self):
         self.prepare_release()
         self.assertEqual(eng(self.tmp, "verify", "--profile", "full").returncode, 0)
@@ -296,6 +310,33 @@ class ReleaseTests(EngTestCase):
         self.assertEqual(res.returncode, 1)
         self.assertIn("clean tree", res.stdout)
         self.assertIn("changelog names version", res.stdout)
+
+
+class PerfTests(EngTestCase):
+    def write_perf(self, name, metrics):
+        path = self.tmp / ".agents" / "evidence" / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"schema": "eng-perf/v1", "metrics": metrics}))
+        return path
+
+    def test_higher_and_lower_metrics_pass(self):
+        base = self.write_perf("base.json", {
+            "score": {"value": 100, "direction": "higher", "unit": "score"},
+            "p95_ms": {"value": 10, "direction": "lower", "unit": "ms"},
+        })
+        cur = self.write_perf("current.json", {
+            "score": {"value": 101, "direction": "higher", "unit": "score"},
+            "p95_ms": {"value": 10.4, "direction": "lower", "unit": "ms"},
+        })
+        res = eng(self.tmp, "perf-check", "--baseline", str(base), "--current", str(cur), "--max-regression", "5")
+        self.assertEqual(res.returncode, 0, res.stdout)
+
+    def test_a_regression_fails(self):
+        base = self.write_perf("base.json", {"score": {"value": 100, "direction": "higher"}})
+        cur = self.write_perf("current.json", {"score": {"value": 80, "direction": "higher"}})
+        res = eng(self.tmp, "perf-check", "--baseline", str(base), "--current", str(cur))
+        self.assertEqual(res.returncode, 1)
+        self.assertIn("FAIL", res.stdout)
 
 
 class ImpactTests(EngTestCase):

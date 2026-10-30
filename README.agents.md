@@ -46,7 +46,8 @@ the generic workflow. Do not duplicate the same rule in three places.
 | `eng security [--json] [--require]` | gitleaks, semgrep, OSV, actionlint, zizmor when installed. |
 | `eng audit-actions` | Require every `uses:` to be a 40-hex commit SHA (or a reviewed exception). |
 | `eng artifact <paths...>` | SHA-256 and size for release artifacts. |
-| `eng release-check ...` | Require clean HEAD, passing full evidence, version, notes, rollback and artifacts; write release evidence. |
+| `eng release-check ...` | Require clean HEAD, passing full evidence, version, notes, rollback, artifacts and a performance comparison; write release evidence. |
+| `eng perf-check ...` | Compare measured metrics with an accepted baseline; fail on a regression beyond the tolerance. |
 | `eng guard staged` | Pre-commit guard: secrets, conflict markers, sensitive/large files. |
 | `eng worktree create/list/remove` | Isolated `.worktrees/<name>` with an owner record. |
 | `eng evidence verify/list/show` | Recompute hashes and check the evidence chain. |
@@ -107,8 +108,15 @@ names/branches, enforces `parallel.max_worktrees`, and refuses to remove a dirty
   --version 1.2.3 \
   --artifact dist/app.tar.gz \
   --notes notes/1.2.3.md \
-  --rollback docs/rollback-1.2.3.md
+  --rollback docs/rollback-1.2.3.md \
+  --performance-baseline bench/baseline.json \
+  --performance-current bench/current.json
 ```
+
+A performance file is JSON with `schema: eng-perf/v1` and `metrics`; each metric has a
+`value`, a `direction` (`higher` or `lower`) and an optional `unit`. The gate allows 5% by
+default; pass `--max-regression 2` to tighten it. A missing metric, a non-numeric value or a
+regression fails the release.
 
 The check refuses a dirty tree, a version absent from `CHANGELOG.md`, missing notes or rollback, a
 missing artifact, or a full evidence record that is not for the current HEAD. On success it writes a
