@@ -1,5 +1,7 @@
 # eng — portable engineering infrastructure for agent-worked repositories
 
+<picture><source media="(prefers-color-scheme: dark)" srcset="site/assets/creed-dark.svg"><img src="site/assets/creed-light.svg" height="44" alt="creed"></picture>
+
 A working, self-contained control layer that a coding agent can discover and run in any repository:
 
 - ten task skills in the Agent Skills `SKILL.md` format;
@@ -52,7 +54,7 @@ hooks/                  pre-commit / pre-push
 ci/                     standalone GitHub Actions workflow
 templates/              AGENTS.md template for new repositories
 tests/                  CLI and site test suites (unittest, temp repos)
-site/                   ADAMANT portal (static, generated)
+site/                   CREED portal (static, generated)
 evals/                  control-validation fixture and runner
 docs/                   architecture, tool rationale, gaps, rollout
 ```
@@ -71,11 +73,12 @@ docs/                   architecture, tool rationale, gaps, rollout
 - **Reversible.** Kit changes are copies with a version; evidence schema is versioned; worktrees can
   be removed without touching the main checkout.
 
-## ADAMANT portal
+## CREED — engineering for agents
 
-**ADAMANT** is the generated portal in `site/` — a human handbook and an agent handoff: lifecycle, principles,
+**[CREED](https://creed.sh)** is the generated portal in `site/` — a human handbook and an agent handoff: lifecycle, principles,
 skill explorer, build paths, tool catalog, evidence model, repository status, `agents.json`,
-`llms.txt` and a downloadable kit.
+`llms.txt` and a downloadable kit. Give an agent **[creed.sh/creed.md](https://creed.sh/creed.md)**
+before a nontrivial task. Repository policy and the user's authorized scope still come first.
 
 ```sh
 make site
@@ -83,7 +86,9 @@ make serve          # http://localhost:8080
 ```
 
 It is generated from the real skills and content, tested for determinism and local links, and
-deployed with Wrangler to Cloudflare Workers at [adamant.cc](https://adamant.cc/).
+deployed with Wrangler to Cloudflare Workers at [creed.sh](https://creed.sh/).
+ADAMANT's old domains redirect with paths and queries preserved. The `eng` CLI, skill names,
+JSON schema identifiers and download path remain compatible. Part of [WCKD](https://wckd.ai).
 
 ## Documentation
 

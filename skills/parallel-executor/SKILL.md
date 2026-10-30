@@ -51,8 +51,10 @@ of agents started. Parallelism is allowed only for genuinely independent units.
 6. Run independent units concurrently. Keep resource-heavy validation sequential if it contends for
    CPU, ports or devices.
 7. On completion, review the diff, run the unit's checks in its worktree, and record evidence.
-8. Integrate one unit at a time onto the latest target. Rebase, resolve conflicts explicitly, and
-   re-run the full required gate after each integration.
+8. Integrate one unit at a time onto the latest target. Prefer merge; rebase only private unit
+   branches. Rewriting shared or published history requires explicit human approval; conflict
+   review is not approval. Resolve conflicts explicitly and re-run the full required gate after
+   each integration.
 9. Remove merged worktrees with `eng worktree remove <id>` after the branch is integrated. Do not
    force-remove dirty work.
 

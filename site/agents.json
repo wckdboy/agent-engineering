@@ -1,14 +1,15 @@
 {
   "schema": "agent-engineering/v1",
-  "name": "ADAMANT",
-  "homepage": "https://adamant.cc",
+  "name": "CREED",
+  "homepage": "https://creed.sh",
+  "creed": "https://creed.sh/creed.md",
   "repository": "https://github.com/wckdboy/agent-engineering",
   "version": "1.1.1",
   "source": {
-    "commit": "df0d2c0",
-    "committed_at": "2026-10-30T15:35:15+01:00",
+    "commit": "dc04619",
+    "committed_at": "2026-10-30T17:10:40+01:00",
     "dirty": true,
-    "content_sha256": "9ac5ab11365038fd1bd21a385ec021cb4bb4ef33a94484888cf7e220aec1f551"
+    "content_sha256": "296d9d748f28bfa780798ffc1dfffff8259b3abd6af53394d6415b1d5bd313fe"
   },
   "start": {
     "read_first": [
@@ -64,6 +65,7 @@
       "name": "Repository intelligence",
       "description": "Build an evidence-based map of an unfamiliar or changing repository before planning work. Use when starting in a repo, locating ownership or entry points, finding tests and CI commands, or answering \"where does this live\" without reading the whole tree.",
       "source": "skills/repo-intelligence/SKILL.md",
+      "raw_url": "https://creed.sh/skills/repo-intelligence/SKILL.md",
       "phase": "understand",
       "risk": "low"
     },
@@ -72,6 +74,7 @@
       "name": "Change impact",
       "description": "Estimate the blast radius of a proposed or in-progress change before implementation or review. Use when touching shared symbols, public interfaces, schemas, persistence, configuration or dependency manifests, and when deciding which tests and consumers must be checked.",
       "source": "skills/change-impact/SKILL.md",
+      "raw_url": "https://creed.sh/skills/change-impact/SKILL.md",
       "phase": "plan",
       "risk": "medium"
     },
@@ -80,6 +83,7 @@
       "name": "Regression guardian",
       "description": "Preserve existing behavior while changing code. Use for bug fixes, refactors, dependency upgrades, and any change where a regression test or characterization test is needed; also use when a fix must be proven to address the reported failure.",
       "source": "skills/regression-guardian/SKILL.md",
+      "raw_url": "https://creed.sh/skills/regression-guardian/SKILL.md",
       "phase": "verify",
       "risk": "medium"
     },
@@ -88,6 +92,7 @@
       "name": "Security auditor",
       "description": "Audit a change or component for security risk. Use when code handles input, authentication, authorization, secrets, subprocesses, files, network requests, serialization, dependencies or CI permissions; also use before a release or when a scanner reports a finding.",
       "source": "skills/security-auditor/SKILL.md",
+      "raw_url": "https://creed.sh/skills/security-auditor/SKILL.md",
       "phase": "verify",
       "risk": "high"
     },
@@ -96,6 +101,7 @@
       "name": "Safe refactor",
       "description": "Change structure without changing externally observable behavior. Use for extracting modules, renaming internals, splitting functions, removing duplication, or reorganizing code where tests and contracts must stay green.",
       "source": "skills/safe-refactor/SKILL.md",
+      "raw_url": "https://creed.sh/skills/safe-refactor/SKILL.md",
       "phase": "implement",
       "risk": "medium"
     },
@@ -104,6 +110,7 @@
       "name": "Parallel executor",
       "description": "Split independent work across isolated agents or worktrees and integrate it safely. Use for multi-part features, independent bug fixes, research plus implementation, or any task where concurrent edits risk conflicts, shared build artifacts or duplicated effort.",
       "source": "skills/parallel-executor/SKILL.md",
+      "raw_url": "https://creed.sh/skills/parallel-executor/SKILL.md",
       "phase": "implement",
       "risk": "high"
     },
@@ -112,6 +119,7 @@
       "name": "Performance engineer",
       "description": "Establish baselines, locate bottlenecks, and prove performance changes under reproducible conditions. Use for hot-path changes, latency or memory regressions, benchmark design, or any claim that code is faster.",
       "source": "skills/performance-engineer/SKILL.md",
+      "raw_url": "https://creed.sh/skills/performance-engineer/SKILL.md",
       "phase": "baseline",
       "risk": "medium"
     },
@@ -120,6 +128,7 @@
       "name": "Contract guardian",
       "description": "Protect public APIs, ABIs, schemas, serialization formats, protocols, CLI behavior and migration invariants. Use when a change alters an interface consumers depend on, when adding a schema migration, or when compatibility must be proven with fixtures.",
       "source": "skills/contract-guardian/SKILL.md",
+      "raw_url": "https://creed.sh/skills/contract-guardian/SKILL.md",
       "phase": "verify",
       "risk": "high"
     },
@@ -128,6 +137,7 @@
       "name": "Failure investigator",
       "description": "Reproduce a failure, find its root cause, and leave a permanent regression check. Use for crashes, failing tests, flaky behavior, production incidents, build breaks and unexplained regressions; also use when a fix is proposed without a confirmed cause.",
       "source": "skills/failure-investigator/SKILL.md",
+      "raw_url": "https://creed.sh/skills/failure-investigator/SKILL.md",
       "phase": "understand",
       "risk": "medium"
     },
@@ -136,6 +146,7 @@
       "name": "Release verifier",
       "description": "Validate release readiness before publishing or tagging. Use when preparing a version, artifact, app build, package or deployment; when checking provenance, signatures, compatibility, security findings, rollback and final evidence.",
       "source": "skills/release-verifier/SKILL.md",
+      "raw_url": "https://creed.sh/skills/release-verifier/SKILL.md",
       "phase": "report",
       "risk": "high"
     }

@@ -269,7 +269,7 @@
 
   function initTheme() {
     const stored = localStorage.getItem("agenteng-theme");
-    const theme = stored || "dark";
+    const theme = stored || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     document.documentElement.dataset.theme = theme;
     updateThemeLabel();
     $("#theme-toggle").addEventListener("click", () => {

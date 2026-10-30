@@ -1,10 +1,12 @@
-# ADAMANT
+# CREED
 
-> ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.
+> CREED is WCKD's engineering guide for agents: values, ten task skills, one verification CLI and evidence, not assertion.
 
-Source: `df0d2c0` · schema `9ac5ab11365038fd` · kit version `1.1.1`.
+Read first: https://creed.sh/creed.md
 
-Homepage: https://adamant.cc  
+Source: `dc04619` · schema `296d9d748f28bfa7` · kit version `1.1.1`.
+
+Homepage: https://creed.sh
 Repository: https://github.com/wckdboy/agent-engineering
 
 ## Start here
@@ -28,43 +30,43 @@ Repository: https://github.com/wckdboy/agent-engineering
 ## Skills
 ### repo-intelligence
 Build an evidence-based map of an unfamiliar or changing repository before planning work. Use when starting in a repo, locating ownership or entry points, finding tests and CI commands, or answering "where does this live" without reading the whole tree.
-Source: `skills/repo-intelligence/SKILL.md`.
+Source: https://creed.sh/skills/repo-intelligence/SKILL.md
 
 ### change-impact
 Estimate the blast radius of a proposed or in-progress change before implementation or review. Use when touching shared symbols, public interfaces, schemas, persistence, configuration or dependency manifests, and when deciding which tests and consumers must be checked.
-Source: `skills/change-impact/SKILL.md`.
+Source: https://creed.sh/skills/change-impact/SKILL.md
 
 ### regression-guardian
 Preserve existing behavior while changing code. Use for bug fixes, refactors, dependency upgrades, and any change where a regression test or characterization test is needed; also use when a fix must be proven to address the reported failure.
-Source: `skills/regression-guardian/SKILL.md`.
+Source: https://creed.sh/skills/regression-guardian/SKILL.md
 
 ### security-auditor
 Audit a change or component for security risk. Use when code handles input, authentication, authorization, secrets, subprocesses, files, network requests, serialization, dependencies or CI permissions; also use before a release or when a scanner reports a finding.
-Source: `skills/security-auditor/SKILL.md`.
+Source: https://creed.sh/skills/security-auditor/SKILL.md
 
 ### safe-refactor
 Change structure without changing externally observable behavior. Use for extracting modules, renaming internals, splitting functions, removing duplication, or reorganizing code where tests and contracts must stay green.
-Source: `skills/safe-refactor/SKILL.md`.
+Source: https://creed.sh/skills/safe-refactor/SKILL.md
 
 ### parallel-executor
 Split independent work across isolated agents or worktrees and integrate it safely. Use for multi-part features, independent bug fixes, research plus implementation, or any task where concurrent edits risk conflicts, shared build artifacts or duplicated effort.
-Source: `skills/parallel-executor/SKILL.md`.
+Source: https://creed.sh/skills/parallel-executor/SKILL.md
 
 ### performance-engineer
 Establish baselines, locate bottlenecks, and prove performance changes under reproducible conditions. Use for hot-path changes, latency or memory regressions, benchmark design, or any claim that code is faster.
-Source: `skills/performance-engineer/SKILL.md`.
+Source: https://creed.sh/skills/performance-engineer/SKILL.md
 
 ### contract-guardian
 Protect public APIs, ABIs, schemas, serialization formats, protocols, CLI behavior and migration invariants. Use when a change alters an interface consumers depend on, when adding a schema migration, or when compatibility must be proven with fixtures.
-Source: `skills/contract-guardian/SKILL.md`.
+Source: https://creed.sh/skills/contract-guardian/SKILL.md
 
 ### failure-investigator
 Reproduce a failure, find its root cause, and leave a permanent regression check. Use for crashes, failing tests, flaky behavior, production incidents, build breaks and unexplained regressions; also use when a fix is proposed without a confirmed cause.
-Source: `skills/failure-investigator/SKILL.md`.
+Source: https://creed.sh/skills/failure-investigator/SKILL.md
 
 ### release-verifier
 Validate release readiness before publishing or tagging. Use when preparing a version, artifact, app build, package or deployment; when checking provenance, signatures, compatibility, security findings, rollback and final evidence.
-Source: `skills/release-verifier/SKILL.md`.
+Source: https://creed.sh/skills/release-verifier/SKILL.md
 
 ## Tools and connectors
 - **ripgrep** (intelligence): Exact symbol and text search across tracked trees. `./.agents/bin/eng impact --base origin/main`

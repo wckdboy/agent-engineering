@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import re
 import shutil
 import subprocess
+import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 from pathlib import Path
 
@@ -66,6 +69,67 @@ class SiteTests(unittest.TestCase):
         self.assertIn("## Commands", llms)
         self.assertIn("## Limits", llms)
 
+    def test_creed_canonical_and_agent_entrypoint(self):
+        data = json.loads(DATA.read_text(encoding="utf-8"))
+        agents = json.loads((SITE / "agents.json").read_text(encoding="utf-8"))
+        self.assertEqual(data["title"], "CREED")
+        self.assertEqual(data["homepage"], "https://creed.sh")
+        self.assertEqual(agents["creed"], "https://creed.sh/creed.md")
+        text = (SITE / "creed.md").read_text(encoding="utf-8")
+        for principle in data["principles"]:
+            self.assertIn(principle["title"], text)
+            for point in principle["points"]:
+                self.assertIn(point, text)
+        for guardrail in data["guardrails"]:
+            self.assertIn(guardrail["body"], text)
+        self.assertIn("repository's authoritative policy", text)
+        self.assertIn("## Understand", text)
+        self.assertIn("https://creed.sh/data/tools.json", text)
+        html = (SITE / "index.html").read_text(encoding="utf-8")
+        self.assertIn('rel="canonical" href="https://creed.sh/"', html)
+        self.assertIn('href="./creed.md"', html)
+
+    def test_raw_agent_sources_match_authoritative_files(self):
+        agents = json.loads((SITE / "agents.json").read_text(encoding="utf-8"))
+        for skill in agents["skills"]:
+            self.assertEqual(skill["raw_url"], f"https://creed.sh/{skill['source']}")
+            self.assertEqual((SITE / skill["source"]).read_bytes(), (KIT / skill["source"]).read_bytes())
+        for reference in (KIT / "references").glob("*.md"):
+            self.assertEqual((SITE / "references" / reference.name).read_bytes(), reference.read_bytes())
+
+    def test_rebuild_removes_deleted_and_renamed_raw_sources(self):
+        spec = importlib.util.spec_from_file_location("portal_build", SITE / "build.py")
+        portal = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(portal)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / "site"
+            (root / "references").mkdir()
+            (root / "references/current.md").write_text("current policy\n")
+            (output / "references").mkdir(parents=True)
+            (output / "references/deleted.md").write_text("obsolete policy\n")
+            (output / "skills/renamed").mkdir(parents=True)
+            (output / "skills/renamed/SKILL.md").write_text("obsolete skill\n")
+            skill = {"id": "current", "source_path": "skills/current/SKILL.md",
+                     "description": "current skill", "raw_markdown": "current skill\n"}
+            with patch.object(portal, "ROOT", root), patch.object(portal, "SITE", output):
+                portal.build_creed([], [], [], [skill], {})
+                self.assertFalse((output / "references/deleted.md").exists())
+                self.assertFalse((output / "skills/renamed/SKILL.md").exists())
+                self.assertEqual((output / "references/current.md").read_text(), "current policy\n")
+                self.assertEqual((output / skill["source_path"]).read_text(), skill["raw_markdown"])
+                (root / "references/current.md").unlink()
+                portal.build_creed([], [], [], [], {})
+                self.assertFalse((output / "references/current.md").exists())
+                self.assertFalse((output / skill["source_path"]).exists())
+
+    def test_legacy_redirects_preserve_path_and_query(self):
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node not installed")
+        res = subprocess.run([node, "--test", str(KIT / "tests" / "test_worker.mjs")], capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+
     def test_paths_and_repositories_are_usable(self):
         data = json.loads(DATA.read_text(encoding="utf-8"))
         self.assertEqual(len(data["paths"]), 8)
@@ -91,7 +155,8 @@ class SiteTests(unittest.TestCase):
         html = (SITE / "index.html").read_text(encoding="utf-8")
         css = (SITE / "assets" / "styles.css").read_text(encoding="utf-8")
         js = (SITE / "assets" / "app.js").read_text(encoding="utf-8")
-        self.assertNotRegex(html, r'<(?:script|link)[^>]+(?:src|href)="https?://')
+        self.assertNotRegex(html, r'<script[^>]+src="https?://')
+        self.assertNotRegex(html, r'<link(?![^>]*\brel="canonical")[^>]+\bhref="https?://')
         self.assertNotIn("url(http", css)
         self.assertNotIn("@import url(http", css)
         self.assertNotIn("fetch(\"http", js)
@@ -127,7 +192,8 @@ class SiteTests(unittest.TestCase):
     def test_build_is_deterministic(self):
         files = [SITE / "data" / "site.json", SITE / "agents.json", SITE / "llms.txt",
                  SITE / "downloads" / "manifest.json", SITE / "downloads" / "eng-kit.zip",
-                 SITE / "docs" / "README.agents.html"]
+                 SITE / "docs" / "README.agents.html", SITE / "creed.md",
+                 SITE / "skills" / "repo-intelligence" / "SKILL.md"]
         before = {str(p): sha(p) for p in files}
         build()
         after = {str(p): sha(p) for p in files}

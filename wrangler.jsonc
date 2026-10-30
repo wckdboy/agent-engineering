@@ -1,14 +1,19 @@
 {
   "name": "adamant",
+  "main": "worker.mjs",
   "compatibility_date": "2026-10-23",
   "workers_dev": true,
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "site"
+    "directory": "site",
+    "binding": "ASSETS",
+    "run_worker_first": true
   },
   "routes": [
+    { "pattern": "creed.sh", "custom_domain": true },
+    { "pattern": "www.creed.sh", "custom_domain": true },
     { "pattern": "adamant.cc", "custom_domain": true },
     { "pattern": "www.adamant.cc", "custom_domain": true }
   ]
