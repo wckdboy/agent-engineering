@@ -1,23 +1,18 @@
 # Changelog
 
-The kit is installed into repositories and versioned as data: `.agents/VERSION` reports the
-release an installed copy came from. Behaviour changes that affect what a gate proves are listed
-here, one line per change, with the release that first shipped it.
+## 1.1.0 — 2026-10-30
 
-## 1.0.1
+- ADAMANT portal generated from the kit, with `agents.json`, `llms.txt`, a skill explorer,
+  build paths, a tool catalog, a hash-chained evidence model and a downloadable kit.
+- `eng perf-check` and a release performance gate: higher/lower-is-better metrics are compared
+  with an accepted baseline; a regression beyond the tolerance blocks the release.
+- `eng release-check` now records and enforces performance alongside clean HEAD, full evidence,
+  version, notes, rollback and artifact hashes.
+- `eng audit-actions` requires full commit-SHA pins; the kit and pilot workflows are pinned.
+- Node 24 action releases for checkout, setup-python and upload-artifact.
+- Expanded Semgrep rules for `os.system`, `pickle.loads` and `execSync`, with positive and
+  negative fixtures.
 
-- **osv-scanner runs inside worktrees.** The recursive source scan honours `.gitignore`, and every
-  repository using the kit ignores `.worktrees/`, so a worktree checkout was invisible to the walk
-  and `eng security` reported `no package sources` — a silent skip exactly where parallel work
-  happens. When the walk finds nothing, the known lockfiles are now named explicitly. The walk
-  stays the first pass, so inputs outside the lockfile list (SBOMs, `pom.xml`, `bun.lock`) keep
-  being scanned in a primary checkout. `-L` arguments carry a leading `:` so a path containing a
-  colon is never read as an inline parser type.
-- **`install.sh` reads `VERSION`** instead of hardcoding it, so an installed copy cannot report a
-  release it is not.
+## 1.0.1 — 2026-10-29
 
-## 1.0.0
-
-- First release: `eng` CLI (detect, init, verify, impact, security, audit-actions, artifact,
-  release-check, guard, evidence, worktree, doctor), ten task skills, hash-chained evidence,
-  isolated worktrees, hooks and the CI template.
+- OSV scans inside worktrees; `install.sh` reads `VERSION`.

@@ -1,0 +1,40 @@
+{
+  "schema": "eng-config/v1",
+  "project": "engineering",
+  "commands": {
+    "fast": [
+      {
+        "name": "check",
+        "run": "make check",
+        "timeout": 1800
+      }
+    ],
+    "full": [
+      {
+        "name": "check",
+        "run": "make check",
+        "timeout": 1800
+      }
+    ]
+  },
+  "security": {
+    "required": [
+      "gitleaks",
+      "semgrep"
+    ],
+    "optional": [
+      "actionlint"
+    ],
+    "gitleaks_config": ".agents/config/gitleaks.toml",
+    "semgrep_config": ".agents/config/semgrep.yml",
+    "gitleaks_history": false,
+    "timeout": 300
+  },
+  "parallel": {
+    "max_worktrees": 2
+  },
+  "release": {
+    "require_performance": true,
+    "max_regression_pct": 5
+  }
+}

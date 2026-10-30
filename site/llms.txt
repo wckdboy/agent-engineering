@@ -2,7 +2,7 @@
 
 > ADAMANT is the agent engineering portal: ten task skills, one verification CLI, hash-chained evidence, isolated worktrees and real security gates.
 
-Source: `ceb7d04` · schema `21d3ef0948b22a97` · kit version `1.0.1`.
+Source: `1f756d2` · schema `21d3ef0948b22a97` · kit version `1.1.0`.
 
 Homepage: https://adamant.cc  
 Repository: https://github.com/wckdboy/agent-engineering

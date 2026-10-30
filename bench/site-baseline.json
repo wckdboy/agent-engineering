@@ -1,0 +1,7 @@
+{
+  "schema": "eng-perf/v1",
+  "name": "ADAMANT site kit artifact size",
+  "metrics": {
+    "site_kit_bytes": {"value": 62000, "direction": "lower", "unit": "bytes"}
+  }
+}
