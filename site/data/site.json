@@ -6,8 +6,8 @@
   "tagline": "Engineering values, task skills and verifiable tools for agents. Evidence over assertion.",
   "version": "1.1.1",
   "source": {
-    "commit": "f30b230",
-    "committed_at": "2026-10-31T03:43:29+01:00",
+    "commit": "cb02a58",
+    "committed_at": "2026-10-31T19:15:42+01:00",
     "dirty": true,
     "content_sha256": "52bf0a0de77c3871a0a4078142e00d965d9ca6e7a4cd1719cde29fa41bfbcbbc"
   },
@@ -1833,8 +1833,8 @@
   },
   "download": {
     "file": "eng-kit.zip",
-    "sha256": "464c63bb6d32b027cec421a1b8064a5571c2a80b5863cb3ca0c7730949a4badf",
-    "size": 60770,
+    "sha256": "94edaadd0e6e822f129ebf0a9136454b87b38425b68903252c22a4e052dc3afa",
+    "size": 60909,
     "entries": 29,
     "files": [
       "AGENTS.md",
