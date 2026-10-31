@@ -183,8 +183,11 @@ class SiteTests(unittest.TestCase):
                       "/run", "https:///run", "https://", "https://[invalid", "https://example.org:bad/run",
                       "https://example.org:99999/run", "https://user:pass@example.org/run", "https://@example.org/run",
                       "https://example.org\\@evil.invalid/run", "https://example.org/\nrun", "https://exa mple.org/run",
-                      "https://example.org/\x00run", None, 123):
+                      "https://example.org/\x00run", "https://999.999.999.999/run", None, 123):
             with self.subTest(url=value), self.assertRaisesRegex(ValueError, "evidence_links"):
+                self.portal.validate_repo_provenance([{"id": "fixture", "evidence_links": [{"label": "Run", "url": value}]}])
+        for value in ("https://127.0.0.1/run", "https://192.0.2.1:8443/run", "https://[2001:db8::1]/run"):
+            with self.subTest(url=value):
                 self.portal.validate_repo_provenance([{"id": "fixture", "evidence_links": [{"label": "Run", "url": value}]}])
         for value in (None, "https://example.org/run", {}, [None], [{"url": "https://example.org/run"}],
                       [{"label": " ", "url": "https://example.org/run"}], [{"label": 123, "url": "https://example.org/run"}]):

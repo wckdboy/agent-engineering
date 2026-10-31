@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import html
+import ipaddress
 import json
 import os
 import re
@@ -63,6 +64,8 @@ def valid_evidence_url(value) -> bool:
         return False
     try:
         url = urlsplit(value)
+        if url.hostname and re.fullmatch(r"[0-9.]+", url.hostname):
+            ipaddress.IPv4Address(url.hostname)
         # A plain authority excludes credentials, encoded hosts and browser URL repairs.
         return bool(url.hostname and re.fullmatch(r"[A-Za-z0-9.\[\]:-]+", url.netloc)
                     and not url.netloc.endswith(":") and (url.port is None or 0 < url.port <= 65535))

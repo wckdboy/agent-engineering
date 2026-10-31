@@ -62,7 +62,7 @@ test('malformed provenance is ignored even if a payload bypasses the builder', a
   const invalid = ['javascript:alert(1)', 'http://example.org/run', '//example.org/run', '/run',
     'https:///run', 'https://', 'https://[invalid', 'https://example.org:bad/run', 'https://example.org:99999/run',
     'https://user:pass@example.org/run', 'https://@example.org/run', 'https://example.org\\@evil.invalid/run',
-    'https://example.org/\nrun', 'https://exa mple.org/run', 'https://example.org/\x00run', null, 123];
+    'https://example.org/\nrun', 'https://exa mple.org/run', 'https://example.org/\x00run', 'https://999.999.999.999/run', null, 123];
   for (const last_observed of ['2026-02-30', '2026-1-01', '20261030', '', null, 20261030]) {
     const html = await render([{ ...legacy, last_observed, evidence_links: [
       ...invalid.map(url => ({ label: 'Unsafe', url })), null, {},

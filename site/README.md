@@ -94,6 +94,7 @@ rollout note is context for the recorded claim, not proof that a check passed or
 
 Links require a nonempty text label and an absolute HTTPS URL with a plain hostname or IP address,
 an optional valid port, and no credentials, whitespace, control characters or backslashes. The
+builder requires numeric IPv4 hosts to use valid dotted-decimal notation. The
 builder rejects invalid provenance before writing generated output; the UI ignores malformed
 optional values if a payload bypasses the builder. Labels and URLs are HTML-escaped. Legacy records
 still render with "Last observed: not recorded" and "No linked evidence recorded" when absent.
