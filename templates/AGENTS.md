@@ -16,6 +16,12 @@
 Add module ownership and public-interface boundaries here. Keep one authoritative location per
 invariant; link instead of copying.
 
+## Work tracking
+
+- Tracker: TODO (e.g. a Plane project and its ID prefix, or GitHub issues). Name one place.
+- Every nontrivial task has an item there before work starts; its ID goes in the branch name or PR
+  title, and the item closes with a link to what landed.
+
 ## Authoritative commands
 
 - Fast check: `{{FAST}}`
