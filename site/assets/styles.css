@@ -371,6 +371,8 @@ main { min-width: 0; }
 .repo-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .repo-head h3 { font-size: 1.1rem; }
 .repo-role { color: var(--muted); font-size: 0.72rem; margin-top: 4px; }
+.repo-provenance, .repo-links { margin-top: 12px; color: var(--muted); font-size: 0.7rem; line-height: 1.5; }
+.repo-links a { text-decoration: underline; text-underline-offset: 3px; }
 .repo-body { margin-top: 12px; color: var(--text-soft); font-size: 0.76rem; line-height: 1.55; }
 .repo-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
 .repo-meta span { font-family: var(--mono); font-size: 0.6rem; color: var(--faint); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; }

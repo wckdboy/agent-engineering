@@ -69,7 +69,44 @@ separate browser gate, not a claim that the Python suite performs browser testin
   and a verifiable command. Do not list a tool as adopted until it is installed and exercised.
 - Add a build path to `content/paths.json`; every step needs a command, a skill and a completion
   statement.
-- Keep repository statuses honest: `green`, `review`, `blocked` or `template`.
+- Keep repository statuses honest: `green`, `review`, `blocked` or `template`. They describe a
+  recorded observation, **not live CI**. Keep summaries and release/issue claims in the past tense.
+
+### Repository provenance
+
+`content/repos.json` accepts two optional fields per repository without changing the
+`agent-engineering-site/v1` schema or existing status values:
+
+```json
+"last_observed": "2026-10-30",
+"evidence_links": [
+  {"label": "Recorded run 123", "url": "https://example.org/actions/runs/123"}
+]
+```
+
+`last_observed` is an author-recorded calendar date (`YYYY-MM-DD`), not the site build date or an
+automatically determined CI timestamp. Omit it when unknown; do not infer it from a content edit.
+Undated historical rollout records stay undated; a newer measured baseline may supply its own
+observation date. The dated PolyCore baseline was measured during alpha verification, not fetched
+by the portal, and covers only the named fast checks on its linked source revision.
+Prefer specific run, commit, artifact or review links, not a mutable "latest" badge. A linked PR or
+rollout note is context for the recorded claim, not proof that a check passed or remains green.
+
+Links require a nonempty text label and an absolute HTTPS URL with a plain hostname or IP address,
+an optional valid port, and no credentials, whitespace, control characters or backslashes. The
+builder rejects invalid provenance before writing generated output; the UI ignores malformed
+optional values if a payload bypasses the builder. Labels and URLs are HTML-escaped. Legacy records
+still render with "Last observed: not recorded" and "No linked evidence recorded" when absent.
+An empty `evidence_links` array is also valid. These fields are copied into `data/site.json` and `agents.json` and
+included in its existing content hash; no source-integrity rules are changed.
+
+The portal never fetches evidence links, checks their availability, or polls CI. It remains static
+and offline-capable; only a user following a link contacts its host. Opened evidence links use
+`noopener noreferrer`. Verification of their content, retention and access permissions is external.
+
+Dependency-free renderer checks run via `python3 -m unittest tests.test_site -v` when Node is on
+`PATH`, or directly with `node --test tests/test_repos.mjs` after a build. They check legacy payloads,
+dated evidence, escaping, unsafe/malformed values and the absence of evidence-network requests.
 
 ## Design constraints
 

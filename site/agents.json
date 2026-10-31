@@ -6,10 +6,10 @@
   "repository": "https://github.com/wckdboy/agent-engineering",
   "version": "1.1.1",
   "source": {
-    "commit": "dc04619",
-    "committed_at": "2026-10-30T17:10:40+01:00",
+    "commit": "c8fc264",
+    "committed_at": "2026-10-30T17:51:51+01:00",
     "dirty": true,
-    "content_sha256": "296d9d748f28bfa780798ffc1dfffff8259b3abd6af53394d6415b1d5bd313fe"
+    "content_sha256": "52bf0a0de77c3871a0a4078142e00d965d9ca6e7a4cd1719cde29fa41bfbcbbc"
   },
   "start": {
     "read_first": [
@@ -936,9 +936,15 @@
       "branch": "main",
       "status": "green",
       "gate": "make check",
-      "evidence": "v1.1.1 released; CI passing; ADAMANT live",
+      "evidence": "Recorded: v1.1.1 released and CI passed; current CI not checked here",
+      "evidence_links": [
+        {
+          "label": "Recorded v1.1.1 rollout",
+          "url": "https://github.com/wckdboy/agent-engineering/commit/2d37f7392e8fbfe45ddebff58807fc24a2f9d864"
+        }
+      ],
       "remote": "wckdboy/agent-engineering",
-      "notes": "The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes."
+      "notes": "The source of truth for skills, CLI, configs and CREED. Changes here are installed into repositories; they are not product changes."
     },
     {
       "id": "sovware",
@@ -947,7 +953,17 @@
       "branch": "main",
       "status": "green",
       "gate": "./.agents/bin/eng verify --profile full",
-      "evidence": "GitHub Actions passing; evidence artifact uploaded",
+      "evidence": "Recorded: GitHub Actions runs passed and evidence artifacts were uploaded",
+      "evidence_links": [
+        {
+          "label": "Recorded run 40944146737",
+          "url": "https://github.com/wckdboy/sovware/actions/runs/40944146737"
+        },
+        {
+          "label": "Recorded run 40946781919",
+          "url": "https://github.com/wckdboy/sovware/actions/runs/40946781919"
+        }
+      ],
       "remote": "wckdboy/sovware",
       "notes": "Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds."
     },
@@ -958,9 +974,24 @@
       "branch": "main",
       "status": "review",
       "gate": "./.agents/bin/eng verify --profile fast",
-      "evidence": "PR #28 merged; full cargo xtask ci, security and scorecard baseline pass",
+      "last_observed": "2026-10-31",
+      "evidence": "Measured at 2026-10-31 02:24 UTC: alpha fast baseline on unmodified main 38b597a passed fmt/check/clippy/deps. This was a measured fast baseline, not full correctness or live CI.",
+      "evidence_links": [
+        {
+          "label": "Observed baseline source 38b597a",
+          "url": "https://github.com/WCKDai/polycore/commit/38b597a"
+        },
+        {
+          "label": "Polykrom CI regression #42",
+          "url": "https://github.com/WCKDai/polycore/issues/42"
+        },
+        {
+          "label": "Earlier controls PR #28",
+          "url": "https://github.com/WCKDai/polycore/pull/28"
+        }
+      ],
       "remote": "WCKDai/polycore",
-      "notes": "Phase 0 kernel. AGENTS.md, ADAMANT controls, gitleaks/Semgrep/OSV/actionlint and the routed-Truck scorecard baseline are on main. No release: Phase 0 and a fresh benchmark are not complete."
+      "notes": "As of the 2026-10-31 observation, issue #42 reported a Linux NaN rejection for shell seed61 in Polykrom's main CI. The alpha fast baseline did not establish a passing full gate or CI result. No completed fix or release is recorded here."
     },
     {
       "id": "polykrom",
@@ -969,9 +1000,19 @@
       "branch": "main",
       "status": "green",
       "gate": "./.agents/bin/eng verify --profile fast",
-      "evidence": "#281/#282/#287/#298/#299/#300 merged; 0.21.0-rc.1 published; full + security gates pass; #288/#289/#295 fixed; 8 advisories accepted",
+      "evidence": "Recorded: #281/#282/#287/#298/#299/#300 merged; 0.21.0-rc.1 published; full + security gates passed; #288/#289/#295 fixed; 8 advisories accepted",
+      "evidence_links": [
+        {
+          "label": "Recorded gate PR #281",
+          "url": "https://github.com/WCKDai/polykrom/pull/281"
+        },
+        {
+          "label": "Recorded post-RC rollout",
+          "url": "https://github.com/wckdboy/agent-engineering/commit/03093860888de08faaa49c68571e58e0d3c0217e"
+        }
+      ],
       "remote": "WCKDai/polykrom",
-      "notes": "0.21.0-rc.1 (prerelease) is published from release 0f8f505 with 45 assets and verified checksums. It includes the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 is fixed. Since the RC, #289 (hold) and #295 (sweep body pairs) merged on main but are not in RC.1. Still open: #293 (mesh size), #294 (closed-loop statics), #296 (tabs) and #297 (face pick), plus PolyCore #29–#31. No stable release and no product benchmark."
+      "notes": "At the recorded rollout, 0.21.0-rc.1 (prerelease) was published from release 0f8f505 with 45 assets and verified checksums. It included the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 was fixed. After the RC, #289 (hold) and #295 (sweep body pairs) merged on main but were not in RC.1. Open then: #293 (mesh size), #294 (closed-loop statics), #296 (tabs) and #297 (face pick), plus PolyCore #29–#31. No stable release or product benchmark was recorded."
     },
     {
       "id": "platform",
@@ -980,9 +1021,9 @@
       "branch": "eng/portable-controls",
       "status": "review",
       "gate": "./.agents/bin/eng verify --profile full",
-      "evidence": "9/9 actions pinned; actionlint and zizmor clean; full gate 3.2s",
+      "evidence": "Recorded locally: 9/9 actions pinned; actionlint and zizmor clean; full gate 3.2s",
       "remote": "local review branch",
-      "notes": "Read-only quality workflow added. The organization-level policy still does not require SHA-pinned actions; that is an owner decision outside the repository."
+      "notes": "A read-only quality workflow was added on the recorded local branch. The organization-level policy did not require SHA-pinned actions at that observation; that is an owner decision outside the repository."
     },
     {
       "id": "template",
@@ -1033,6 +1074,7 @@
     "The kit scans tracked files for secrets; history scanning is opt-in and untracked files are not covered until staged.",
     "OSV needs network and a supported lockfile; no package sources means skipped, not pass.",
     "A green gate describes only the checks that ran; it is not a proof of correctness or security.",
+    "Repository statuses are recorded observations, not live CI. Dates and evidence links are author-supplied; the portal does not fetch or verify them.",
     "macOS and Linux are supported; the evidence index uses fcntl and does not run on Windows.",
     "Only the pilot and local review branches have been exercised; other repositories are not yet rolled out.",
     "The agent evaluation harness is a smoke test with two tasks, not a statistical model benchmark.",

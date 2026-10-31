@@ -20,8 +20,9 @@ import re
 import shutil
 import subprocess
 import zipfile
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = Path(__file__).resolve().parent
@@ -54,6 +55,39 @@ def run_git(*args: str) -> str:
 
 def read_json(name: str):
     return json.loads((CONTENT / name).read_text(encoding="utf-8"))
+
+
+def valid_evidence_url(value) -> bool:
+    """Accept absolute HTTPS links only; never fetch evidence during a build."""
+    if not isinstance(value, str) or not value.startswith("https://") or re.search(r'[\s\x00-\x1f\x7f\\<>"`]', value):
+        return False
+    try:
+        url = urlsplit(value)
+        # A plain authority excludes credentials, encoded hosts and browser URL repairs.
+        return bool(url.hostname and re.fullmatch(r"[A-Za-z0-9.\[\]:-]+", url.netloc)
+                    and not url.netloc.endswith(":") and (url.port is None or 0 < url.port <= 65535))
+    except ValueError:
+        return False
+
+
+def validate_repo_provenance(repos):
+    """Optional additive fields on agent-engineering-site/v1 repository records."""
+    for repo in repos:
+        if "last_observed" in repo:
+            value = repo["last_observed"]
+            try:
+                if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+                    raise ValueError
+                date.fromisoformat(value)
+            except ValueError:
+                raise ValueError(f"{repo['id']}: last_observed must be a YYYY-MM-DD calendar date") from None
+        if "evidence_links" in repo:
+            links = repo["evidence_links"]
+            if not isinstance(links, list) or any(
+                not isinstance(link, dict) or not isinstance(link.get("label"), str)
+                or not link["label"].strip() or not valid_evidence_url(link.get("url")) for link in links
+            ):
+                raise ValueError(f"{repo['id']}: evidence_links must contain labeled absolute HTTPS URLs without credentials")
 
 
 def canonical(obj) -> str:
@@ -309,6 +343,7 @@ def main():
     tools = read_json("tools.json")
     paths = read_json("paths.json")
     repos = read_json("repos.json")
+    validate_repo_provenance(repos)
 
     skills = sorted((parse_skill(p) for p in (ROOT / "skills").glob("*/SKILL.md")), key=lambda s: s["order"])
     if len(skills) != 10:
@@ -338,6 +373,7 @@ def main():
         "The kit scans tracked files for secrets; history scanning is opt-in and untracked files are not covered until staged.",
         "OSV needs network and a supported lockfile; no package sources means skipped, not pass.",
         "A green gate describes only the checks that ran; it is not a proof of correctness or security.",
+        "Repository statuses are recorded observations, not live CI. Dates and evidence links are author-supplied; the portal does not fetch or verify them.",
         "macOS and Linux are supported; the evidence index uses fcntl and does not run on Windows.",
         "Only the pilot and local review branches have been exercised; other repositories are not yet rolled out.",
         "The agent evaluation harness is a smoke test with two tasks, not a statistical model benchmark.",
@@ -442,8 +478,8 @@ def main():
             llms.append(f"- **{t['name']}** ({t['category']}): {t['summary']} `{t['command']}`")
     llms += ["", "## Rules"]
     llms += [f"- **{g['title']}** — {g['body']}" for g in guardrails]
-    llms += ["", "## Repositories"]
-    llms += [f"- **{r['name']}** — {r['role']}, branch `{r['branch']}`, status {r['status']}. {r['notes']}" for r in repos]
+    llms += ["", "## Repositories", "Recorded observations, not live CI. See agents.json for dates and evidence links."]
+    llms += [f"- **{r['name']}** — {r['role']}, branch `{r['branch']}`, recorded status {r['status']}. {r['notes']}" for r in repos]
     llms += ["", "## Limits"]
     llms += [f"- {limit}" for limit in limits]
     llms += ["", "Machine-readable: `./agents.json` · `./data/site.json` · `./data/skills.json` · `./downloads/eng-kit.zip`", ""]
