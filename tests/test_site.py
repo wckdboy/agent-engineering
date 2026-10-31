@@ -32,6 +32,9 @@ def build():
 class SiteTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        spec = importlib.util.spec_from_file_location("portal_build", SITE / "build.py")
+        cls.portal = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.portal)
         build()
 
     def test_generated_skills_are_complete(self):
@@ -141,6 +144,62 @@ class SiteTests(unittest.TestCase):
                 self.assertTrue(step["done"])
         statuses = {repo["status"] for repo in data["repos"]}
         self.assertTrue({"green", "review", "template"}.issubset(statuses))
+
+    def test_repository_provenance_is_optional_and_preserved_in_data(self):
+        repos = json.loads((SITE / "content/repos.json").read_text())
+        legacy = {k: v for k, v in repos[0].items() if k not in ("last_observed", "evidence_links")}
+        observed = dict(legacy, id="observed", last_observed="2026-10-30", evidence_links=[
+            {"label": "Recorded run", "url": "https://example.org/actions/runs/123?job=4&attempt=1"},
+        ])
+        fixtures = [legacy, observed]
+        read_json = self.portal.read_json
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp)
+            with patch.object(self.portal, "SITE", output), \
+                    patch.object(self.portal, "DOWNLOADS", output / "downloads"), \
+                    patch.object(self.portal, "read_json", side_effect=lambda name: fixtures if name == "repos.json" else read_json(name)):
+                self.portal.main()
+            data = json.loads((output / "data/site.json").read_text())
+            self.assertEqual(data["schema"], "agent-engineering-site/v1")
+            self.assertEqual(data["repos"], fixtures)
+            agents = json.loads((output / "agents.json").read_text())
+            self.assertEqual(agents["schema"], "agent-engineering/v1")
+            self.assertEqual(agents["repos"], fixtures)
+            self.assertIn("Recorded observations, not live CI", (output / "llms.txt").read_text())
+            self.assertTrue(any("not live CI" in limit for limit in data["limits"]))
+            # Provenance participates in the same content hash as the original fields.
+            payload = {key: data[key] for key in ("skills", "tools", "paths", "principles", "phases", "guardrails", "repos")}
+            self.assertEqual(data["source"]["content_sha256"],
+                             hashlib.sha256(self.portal.canonical(payload).encode()).hexdigest())
+            payload["repos"][1]["last_observed"] = "2026-10-29"
+            self.assertNotEqual(data["source"]["content_sha256"],
+                                hashlib.sha256(self.portal.canonical(payload).encode()).hexdigest())
+
+    def test_repository_provenance_rejects_invalid_dates_and_links(self):
+        for value in ("2026-02-30", "2026-1-01", "20261030", "", None, 20261030):
+            with self.subTest(last_observed=value), self.assertRaisesRegex(ValueError, "last_observed"):
+                self.portal.validate_repo_provenance([{"id": "fixture", "last_observed": value}])
+        for value in ("javascript:alert(1)", "http://example.org/run", "//example.org/run",
+                      "/run", "https:///run", "https://", "https://[invalid", "https://example.org:bad/run",
+                      "https://example.org:99999/run", "https://user:pass@example.org/run", "https://@example.org/run",
+                      "https://example.org\\@evil.invalid/run", "https://example.org/\nrun", "https://exa mple.org/run",
+                      "https://example.org/\x00run", "https://999.999.999.999/run", None, 123):
+            with self.subTest(url=value), self.assertRaisesRegex(ValueError, "evidence_links"):
+                self.portal.validate_repo_provenance([{"id": "fixture", "evidence_links": [{"label": "Run", "url": value}]}])
+        for value in ("https://127.0.0.1/run", "https://192.0.2.1:8443/run", "https://[2001:db8::1]/run"):
+            with self.subTest(url=value):
+                self.portal.validate_repo_provenance([{"id": "fixture", "evidence_links": [{"label": "Run", "url": value}]}])
+        for value in (None, "https://example.org/run", {}, [None], [{"url": "https://example.org/run"}],
+                      [{"label": " ", "url": "https://example.org/run"}], [{"label": 123, "url": "https://example.org/run"}]):
+            with self.subTest(evidence_links=value), self.assertRaisesRegex(ValueError, "evidence_links"):
+                self.portal.validate_repo_provenance([{"id": "fixture", "evidence_links": value}])
+
+    def test_repository_cards_render_provenance(self):
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node not installed")
+        res = subprocess.run([node, "--test", str(KIT / "tests/test_repos.mjs")], capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
 
     def test_local_links_exist(self):
         text = (SITE / "index.html").read_text(encoding="utf-8")

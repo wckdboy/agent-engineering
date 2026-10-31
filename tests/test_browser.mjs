@@ -52,6 +52,7 @@ try {
       }, theme);
       await page.waitForSelector('.skill-card');
       const id = `${theme}/${width}`;
+      check((await page.locator('.repo-provenance').allTextContents()).every(text => text.includes('not live CI')), `${id} recorded repository status`);
       check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${id} overflow`);
       const skip = page.locator('.skip-link');
       await skip.focus();
@@ -73,6 +74,7 @@ try {
         check(!(await page.locator('.drawer').isVisible()), `${id} skill dismiss`);
       }
       if (process.env.QA_SHOTS && [1440, 1000, 320].includes(width)) await page.screenshot({ path: `${process.env.QA_SHOTS}/creed-${theme}-${width}.png` });
+      if (process.env.QA_SHOTS && [1440, 320].includes(width)) await page.locator('#repos').screenshot({ path: `${process.env.QA_SHOTS}/creed-repos-${theme}-${width}.png` });
       await page.goto(`${origin}/docs/README.agents.html`);
       await page.evaluate(t => { document.documentElement.dataset.theme = t; }, theme);
       const codeRatio = await contrast(page.locator('.doc pre code').first(), page.locator('.doc pre').first());
@@ -81,9 +83,38 @@ try {
       await context.close();
     }
   }
+  const context = await browser.newContext({ viewport: { width: 390, height: 900 } });
+  const page = await context.newPage();
+  page.on('pageerror', error => failures.push(error.message));
+  const data = JSON.parse(await readFile(resolve(root, 'data/site.json'), 'utf8'));
+  const legacy = { ...data.repos[0] };
+  delete legacy.last_observed;
+  delete legacy.evidence_links;
+  data.repos = [{ ...legacy, name: 'Dated fixture', last_observed: '2026-10-30', evidence_links: [
+    { label: '<Run> & result', url: 'https://example.org/runs/123?job=4&attempt=1' },
+    { label: 'Unsafe', url: 'javascript:alert(1)' },
+    { label: 'Malformed', url: 'https://[invalid' },
+  ] }, legacy];
+  await page.route('**/data/site.json', route => route.fulfill({ json: data }));
+  const external = [];
+  page.on('request', request => { if (!request.url().startsWith(origin)) external.push(request.url()); });
+  await page.goto(origin);
+  await page.waitForSelector('.repo-card');
+  const dated = page.locator('.repo-card').first();
+  check(await dated.locator('time').getAttribute('datetime') === '2026-10-30', 'repository date');
+  check(await dated.locator('.repo-links a').count() === 1, 'unsafe repository links ignored');
+  const link = dated.locator('.repo-links a');
+  check(await link.textContent() === '<Run> & result ↗', 'repository evidence label escaped');
+  check(await link.getAttribute('rel') === 'noopener noreferrer', 'repository evidence referrer protection');
+  const undated = page.locator('.repo-card').nth(1);
+  check((await undated.textContent()).includes('Last observed: not recorded'), 'legacy repository date unknown');
+  check((await undated.textContent()).includes('No linked evidence recorded'), 'legacy repository evidence unknown');
+  check(external.length === 0, 'repository evidence not fetched', external.join(', '));
+  check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'repository provenance overflow');
+  await context.close();
 } finally {
   await browser.close();
   await new Promise(r => server.close(r));
 }
 assert.deepEqual(failures, [], failures.join('\n'));
-console.log('PASS: 14 theme/viewport profiles, contrast, inline links, navigation, documentation and skill dismissal');
+console.log('PASS: 14 theme/viewport profiles, contrast, inline links, navigation, documentation, skill dismissal and repository provenance');

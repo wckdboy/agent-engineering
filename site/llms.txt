@@ -4,7 +4,7 @@
 
 Read first: https://creed.sh/creed.md
 
-Source: `dc04619` · schema `296d9d748f28bfa7` · kit version `1.1.1`.
+Source: `f30b230` · schema `52bf0a0de77c3871` · kit version `1.1.1`.
 
 Homepage: https://creed.sh
 Repository: https://github.com/wckdboy/agent-engineering
@@ -106,18 +106,20 @@ Source: https://creed.sh/skills/release-verifier/SKILL.md
 - **Stay inside the owned boundary** — Do not edit another agent's files, shared generated artifacts or unrelated modules. Coordinate through the integration owner. A worktree is isolation, not permission to bypass review.
 
 ## Repositories
-- **engineering** — Portable kit source, branch `main`, status green. The source of truth for skills, CLI, configs and ADAMANT. Changes here are installed into repositories; they are not product changes.
-- **sovware** — Pilot repository, branch `main`, status green. Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds.
-- **polycore** — Geometric kernel, branch `main`, status review. Phase 0 kernel. AGENTS.md, ADAMANT controls, gitleaks/Semgrep/OSV/actionlint and the routed-Truck scorecard baseline are on main. No release: Phase 0 and a fresh benchmark are not complete.
-- **polykrom** — Large Rust CAD workspace, branch `main`, status green. 0.21.0-rc.1 (prerelease) is published from release 0f8f505 with 45 assets and verified checksums. It includes the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 is fixed. Since the RC, #289 (hold) and #295 (sweep body pairs) merged on main but are not in RC.1. Still open: #293 (mesh size), #294 (closed-loop statics), #296 (tabs) and #297 (face pick), plus PolyCore #29–#31. No stable release and no product benchmark.
-- **platform** — Infrastructure control plane, branch `eng/portable-controls`, status review. Read-only quality workflow added. The organization-level policy still does not require SHA-pinned actions; that is an owner decision outside the repository.
-- **your repository** — New installation, branch `feature branch`, status template. Install the kit, keep AGENTS.md authoritative, and start with the fast profile. Do not copy another repository's commands without checking its build files.
+Recorded observations, not live CI. See agents.json for dates and evidence links.
+- **engineering** — Portable kit source, branch `main`, recorded status green. The source of truth for skills, CLI, configs and CREED. Changes here are installed into repositories; they are not product changes.
+- **sovware** — Pilot repository, branch `main`, recorded status green. Small Rust kernel with an existing ledger and merge gate. Fast gate around one second warm; full gate around five to six seconds.
+- **polycore** — Geometric kernel, branch `main`, recorded status review. As of the 2026-10-31 observation, issue #42 reported a Linux NaN rejection for shell seed61 in Polykrom's main CI. The alpha fast baseline did not establish a passing full gate or CI result. No completed fix or release is recorded here.
+- **polykrom** — Large Rust CAD workspace, branch `main`, recorded status green. At the recorded rollout, 0.21.0-rc.1 (prerelease) was published from release 0f8f505 with 45 assets and verified checksums. It included the controls, MCP quality gate, contract fixture, security workflow and MJCF loop closure; design format 35 was fixed. After the RC, #289 (hold) and #295 (sweep body pairs) merged on main but were not in RC.1. Open then: #293 (mesh size), #294 (closed-loop statics), #296 (tabs) and #297 (face pick), plus PolyCore #29–#31. No stable release or product benchmark was recorded.
+- **platform** — Infrastructure control plane, branch `eng/portable-controls`, recorded status review. A read-only quality workflow was added on the recorded local branch. The organization-level policy did not require SHA-pinned actions at that observation; that is an owner decision outside the repository.
+- **your repository** — New installation, branch `feature branch`, recorded status template. Install the kit, keep AGENTS.md authoritative, and start with the fast profile. Do not copy another repository's commands without checking its build files.
 
 ## Limits
 - Impact analysis is textual, not a build graph.
 - The kit scans tracked files for secrets; history scanning is opt-in and untracked files are not covered until staged.
 - OSV needs network and a supported lockfile; no package sources means skipped, not pass.
 - A green gate describes only the checks that ran; it is not a proof of correctness or security.
+- Repository statuses are recorded observations, not live CI. Dates and evidence links are author-supplied; the portal does not fetch or verify them.
 - macOS and Linux are supported; the evidence index uses fcntl and does not run on Windows.
 - Only the pilot and local review branches have been exercised; other repositories are not yet rolled out.
 - The agent evaluation harness is a smoke test with two tasks, not a statistical model benchmark.

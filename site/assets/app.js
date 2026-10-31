@@ -212,21 +212,44 @@
       </div>`;
   }
 
+  function observedDate(value) {
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith("0000")) return null;
+    const date = new Date(`${value}T00:00:00Z`);
+    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value ? value : null;
+  }
+
+  function safeEvidenceLink(link) {
+    if (!link || typeof link.label !== "string" || !link.label.trim() || typeof link.url !== "string") return false;
+    if (!link.url.startsWith("https://") || /[\s\x00-\x1f\x7f\\<>"`]/.test(link.url)) return false;
+    const authority = link.url.slice(8).split(/[/?#]/)[0];
+    if (!/^[A-Za-z0-9.\[\]:-]+$/.test(authority) || authority.endsWith(":")) return false;
+    try {
+      const url = new URL(link.url);
+      return !!url.hostname && (!url.port || Number(url.port) > 0);
+    } catch { return false; }
+  }
+
   function renderRepos() {
-    $("#repo-grid").innerHTML = state.data.repos.map((repo) => `
+    $("#repo-grid").innerHTML = state.data.repos.map((repo) => {
+      const observed = observedDate(repo.last_observed);
+      const links = Array.isArray(repo.evidence_links) ? repo.evidence_links.filter(safeEvidenceLink) : [];
+      return `
       <article class="repo-card">
         <div class="repo-head">
           <div><h3>${esc(repo.name)}</h3><p class="repo-role">${esc(repo.role)}</p></div>
-          <span class="status-chip ${esc(repo.status)}">${esc(repo.status)}</span>
+          <span class="status-chip ${esc(repo.status)}">${repo.status === "template" ? "" : "recorded "}${esc(repo.status)}</span>
         </div>
+        <p class="repo-provenance">Recorded observation · not live CI<br>Last observed: ${observed ? `<time datetime="${observed}">${observed}</time>` : "not recorded"}</p>
         <p class="repo-body">${esc(repo.evidence)}</p>
+        <p class="repo-links">${links.length ? links.map((link) => `<a href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} ↗</a>`).join(" · ") : "No linked evidence recorded"}</p>
         <div class="repo-meta">
           <span>branch ${esc(repo.branch)}</span>
           <span>${esc(repo.gate)}</span>
           ${repo.remote ? `<span>${esc(repo.remote)}</span>` : ""}
         </div>
         <p class="repo-note">${esc(repo.notes)}</p>
-      </article>`).join("");
+      </article>`;
+    }).join("");
   }
 
   function renderLimits() {
